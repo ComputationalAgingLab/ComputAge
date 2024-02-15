@@ -2,6 +2,7 @@
 The module for getting datasets from the data repository of that project.
 """
 
+from typing import Any
 from tqdm.notebook import trange
 import requests
 import pickle
@@ -49,8 +50,6 @@ def download_data(url: str,
                     pickle.dump(data, f)
         if total_size != 0 and progress_bar.n != total_size:
             raise RuntimeError('Failed to download file. Please check if it exists in the remote repository.')
-
-from typing import Any
 
 def import_dataset(dataset_path: str) -> tuple[Any, Any]:
     with open(dataset_path, 'rb') as f:
