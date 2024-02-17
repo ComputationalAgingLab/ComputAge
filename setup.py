@@ -8,6 +8,6 @@ setup(
     install_requires=[
         'scikit-learn',
     ],
-    author_email='',
+    author_email='dmitrii.kriukov@skoltech.ru',
     zip_safe=False,
 )

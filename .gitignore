@@ -1,3 +1,7 @@
+#data for testing
+data/
+playground.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
