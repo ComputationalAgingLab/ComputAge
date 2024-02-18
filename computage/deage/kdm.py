@@ -9,8 +9,6 @@ from sklearn.base import BaseEstimator
 from sklearn.model_selection import train_test_split as tts
 from sklearn.linear_model import LassoCV
 from sklearn.metrics import median_absolute_error, mean_squared_error, r2_score
-from matplotlib import pyplot as plt
-import seaborn as sns
 from statsmodels.stats.multitest import multipletests
 import pickle
 
@@ -524,26 +522,26 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
         return (BCvar, BECvar, BEBvar, BECBvar, rchar) 
         
     
-    def plot_metrics(self):
-        met = np.asarray(self.metrics)
-        met = pd.DataFrame(met, columns=["Loss Train", "Loss Val", "MedAE Train", "MedAE Val", "R2 Train", "R2 Val"])
+    # def plot_metrics(self):
+    #     met = np.asarray(self.metrics)
+    #     met = pd.DataFrame(met, columns=["Loss Train", "Loss Val", "MedAE Train", "MedAE Val", "R2 Train", "R2 Val"])
 
-        fig, axs = plt.subplots(1, 3, layout='constrained', figsize=(13, 5))
-        metric_names = ["Loss", "MedAE", "R2"]
-        for i, metric in enumerate(metric_names):
-            ax = axs[i]
-            sns.lineplot(met[[f"{metric} Train", f"{metric} Val"]].reset_index(), dashes=False, ax=ax)
-            ax.set_title(metric)
-            ax.set_xlabel('Number of features')
-            if i != 1:
-                ax.legend().remove()
-            else:
-                handles, labels = ax.get_legend_handles_labels()
-                ax.legend(handles, [l.split(" ")[1] for l in labels], loc="upper center")
-            if metric == "R2":
-                ax.set_ylim([-1, 1.05])
-        sns.despine(fig=fig)
-        plt.show()
+    #     fig, axs = plt.subplots(1, 3, layout='constrained', figsize=(13, 5))
+    #     metric_names = ["Loss", "MedAE", "R2"]
+    #     for i, metric in enumerate(metric_names):
+    #         ax = axs[i]
+    #         sns.lineplot(met[[f"{metric} Train", f"{metric} Val"]].reset_index(), dashes=False, ax=ax)
+    #         ax.set_title(metric)
+    #         ax.set_xlabel('Number of features')
+    #         if i != 1:
+    #             ax.legend().remove()
+    #         else:
+    #             handles, labels = ax.get_legend_handles_labels()
+    #             ax.legend(handles, [l.split(" ")[1] for l in labels], loc="upper center")
+    #         if metric == "R2":
+    #             ax.set_ylim([-1, 1.05])
+    #     sns.despine(fig=fig)
+    #     plt.show()
 
     def load_model(self, path):
         with open(path, 'rb') as f:
