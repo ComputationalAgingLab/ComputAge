@@ -3,6 +3,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import DotProduct, WhiteKernel, RBF
 import numpy as np
+import pandas as pd
+from typing import Union, List
 
 from .base import DeAgeBaseEstimator
 
@@ -15,16 +17,20 @@ class DeAge(DeAgeBaseEstimator):
     n_components: {int, str} - number of PLS components. 'auto' - use auto for 
         seaching the best number of components based on the MAE of prediction.
 
-    head_estimator: str - ['linear', 'gpr', 'kdm']
+    head_estimator: str - ['linear', 'gpr', 'kdm', 'rf']
     """
 
-    def __init__(self, n_components=2, head_estimator:str='linear'):
+    def __init__(self, 
+                 n_components: Union[int, str] = 2, 
+                 head_estimator: str = 'linear'):
         super().__init__()
         
         self.head_estimator = head_estimator
         self.n_components = n_components
 
-    def fit(self, X, y):
+    def fit(self, 
+            X: pd.DataFrame, 
+            y: Union[pd.DataFrame, list, np.ndarray, pd.Series]) -> None:
         #store feature names
         self.train_features = X.columns
 
@@ -49,7 +55,9 @@ class DeAge(DeAgeBaseEstimator):
         else:
             raise NotImplementedError
 
-    def predict(self, X):
+    def predict(self, 
+                X: pd.DataFrame,) -> pd.Series:
+        input_indices = X.index.copy()
         #check if dataset contains NaN
         if ~np.isnan(X).any(axis=0).any(): 
             X_ = self.pls.transform(X)
@@ -59,20 +67,24 @@ class DeAge(DeAgeBaseEstimator):
             X_scaled = (X - self.pls._x_mean) / self.pls._x_std
             mask = np.isfinite(X_scaled).to_numpy()[:, :, None]
 
+            #saving and masking transforming matrices
             Vnew = np.repeat(self.V[None, :, :], X_scaled.shape[0], axis=0) * mask #[n x p x k]
             Lnew = np.repeat(self.L[None, :, :], X_scaled.shape[0], axis=0) * mask
 
             LVprod = np.matmul(np.transpose(Lnew, (0, 2, 1)), Vnew)
-            LVinv = map(lambda n: np.linalg.pinv(n), LVprod) #<- is it bad, performance bottleneck?
+            LVinv = map(lambda n: np.linalg.pinv(n), LVprod) #<- TODO: check if it is bad, performance bottleneck?
             LVinv = np.asarray(list(LVinv))
             Rnew = np.matmul(Vnew, LVinv) #construct a new rotation matrix
 
             X_scaled = X_scaled.fillna(0.).to_numpy()[:, :, np.newaxis]
 
-            # resulting in a [n x k] matrix
+            # resulting in a [n x k] matrix of transformed data
             Xp_scaled = np.sum(X_scaled * Rnew, axis=1)
-            return self.head.predict(Xp_scaled)
+            y_pred = self.head.predict(Xp_scaled)
+            return pd.Series(data=y_pred, index=input_indices)
     
-    def search_best_n_components(self, X, y):
+    def _search_best_n_components(self,
+                                  X: pd.DataFrame, 
+                                  y: Union[pd.DataFrame, list, np.ndarray, pd.Series]) -> int:
         # TODO
         return 1

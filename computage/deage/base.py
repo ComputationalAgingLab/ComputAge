@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
 from sklearn.base import BaseEstimator
 import numpy as np
 import pandas as pd
 
 
 
-class DeAgeBaseEstimator(BaseEstimator):    
+class DeAgeBaseEstimator(BaseEstimator, ABC):    
     """
     Basic class of DeAge
     The key difference of DeAge-based model is their capability of working
@@ -26,8 +27,16 @@ class DeAgeBaseEstimator(BaseEstimator):
 
         return None
     
+    @abstractmethod
+    def fit(self, X, y):
+        ...
 
-class PublishedClocksBaseEstimator(BaseEstimator):
+    @abstractmethod
+    def predict(self, X):
+        ...
+    
+
+class PublishedClocksBaseEstimator(BaseEstimator, ABC):
     """
     Basic class providing better interface for working with published aging clocks.
     The key features are:
@@ -42,3 +51,7 @@ class PublishedClocksBaseEstimator(BaseEstimator):
 
     def map_features(self, assembly='all'):
         pass
+
+    @abstractmethod
+    def predict(self, X):
+        ...

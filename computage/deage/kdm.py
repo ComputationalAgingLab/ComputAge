@@ -11,27 +11,28 @@ from sklearn.linear_model import LassoCV
 from sklearn.metrics import median_absolute_error, mean_squared_error, r2_score
 from statsmodels.stats.multitest import multipletests
 import pickle
+from typing import Union, Optional
 
 from .base import DeAgeBaseEstimator
 
 
 class KlemeraDoubalEstimator(DeAgeBaseEstimator):    
     def __init__(self, 
-                 cv=10,
-                 cv_val_size=0.2,
-                 cv_stratify=None,
-                 feature_selection_method='forward',
-                 feature_selection_criterion='mse',
-                 feature_pval_threshold=0.5,
-                 feature_stability_test=0.2, #tmp
-                 lasso_preselection=True,
-                 lasso_n_alphas=50,
-                 weighing='rse',
-                 max_features=10000,
-                 nan_train_threshold=0.3, #tmp
-                 orthogonal_features=False, #tmp
-                 n_jobs=8,
-                 verbose=0,
+                 cv: int = 10,
+                 cv_val_size: float = 0.2,
+                 cv_stratify: Union[np.ndarray, pd.Series] | None = None,
+                 feature_selection_method: str = 'forward',
+                 feature_selection_criterion: str = 'mse',
+                 feature_pval_threshold: float = 0.5,
+                 feature_stability_test: float = 0.2, #tmp
+                 lasso_preselection: bool = True,
+                 lasso_n_alphas: int = 50,
+                 weighing: str = 'rse',
+                 max_features: int = 10000,
+                 nan_train_threshold: float = 0.3, #tmp
+                 orthogonal_features: bool = False, #tmp
+                 n_jobs: int = 8,
+                 verbose: bool | int = 0,
                  ):
         """
         Klemera-Doubal Estimator - a model for estimation of a biological age.

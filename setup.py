@@ -7,6 +7,10 @@ setup(
     packages=['computage'],
     install_requires=[
         'scikit-learn',
+        'scipy',
+        'statsmodels',
+        'mapply',
+        
     ],
     author_email='dmitrii.kriukov@skoltech.ru',
     zip_safe=False,
