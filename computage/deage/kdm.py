@@ -577,6 +577,7 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
         
 ### TODO from Dmitrii
 
+## add top n% custom feature selection by top-n/top-%
 ## testing all
 ## add NaN interpolation filling with linear models
 
