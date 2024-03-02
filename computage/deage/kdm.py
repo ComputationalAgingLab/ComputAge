@@ -1,6 +1,6 @@
 #todo: 
 # assign types of parameters
-import mapply
+# import mapply
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -320,8 +320,9 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
 
         #train all estimators
         if self.verbose > 0: print('Training estimators on full data.')
-        mapply.init(n_workers=self.n_jobs, chunk_size=100, max_chunks_per_worker=10, progressbar=False)
-        self._model = X.mapply(lambda x: _fit_feature(y, x), result_type='expand').rename(index={0: 'slope', 
+        # mapply.init(n_workers=self.n_jobs, chunk_size=100, max_chunks_per_worker=10, progressbar=False)
+        self._model = X.apply(lambda x: _fit_feature(y, x), result_type='expand').reset_index(drop=True).rename(index={
+                                                                                                 0: 'slope', 
                                                                                                  1: 'intercept', 
                                                                                                  2: 'rvalue', 
                                                                                                  3: 'p-value', 
@@ -376,11 +377,11 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
                                    random_state=i, stratify=self.cv_stratify,) for i in range(self.cv)]
             
             if self.verbose > 0: print('Training estimators on different cv-folds.')
-            mapply.init(n_workers=self.n_jobs, chunk_size=100, max_chunks_per_worker=10, progressbar=False)
+            # mapply.init(n_workers=self.n_jobs, chunk_size=100, max_chunks_per_worker=10, progressbar=False)
             self.cv_models = []
             for f in self.folds:
                 X_train, _, y_train, _ = f
-                model = X_train.mapply(lambda x: _fit_feature(y_train, x), result_type='expand').rename(index={0: 'slope', 
+                model = X_train.apply(lambda x: _fit_feature(y_train, x), result_type='expand').reset_index(drop=True).rename(index={0: 'slope', 
                                                                                                                 1: 'intercept', 
                                                                                                                 2: 'rvalue', 
                                                                                                                 3: 'p-value', 
