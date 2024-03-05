@@ -2,6 +2,7 @@ from sklearn.cross_decomposition import PLSRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import DotProduct, WhiteKernel, RBF
+from sklearn.model_selection import cross_val_score, ShuffleSplit
 import numpy as np
 import pandas as pd
 from typing import Union, List
@@ -18,15 +19,24 @@ class DeAge(DeAgeBaseEstimator):
         seaching the best number of components based on the MAE of prediction.
 
     head_estimator: str - ['linear', 'gpr', 'kdm', 'rf']
+
+    TODO docstring
     """
 
     def __init__(self, 
                  n_components: Union[int, str] = 2, 
-                 head_estimator: str = 'linear'):
+                 head_estimator: str = 'linear',
+                 n_splits: int = 5,
+                 rel_criterion: float = 1e-2,
+                 random_state: Union[int, None] = None
+                 ):
         super().__init__()
         
         self.head_estimator = head_estimator
         self.n_components = n_components
+        self.n_splits = n_splits
+        self.rel_criterion = rel_criterion
+        self.random_state = random_state
 
     def fit(self, 
             X: pd.DataFrame, 
@@ -35,7 +45,9 @@ class DeAge(DeAgeBaseEstimator):
         self.train_features = X.columns
 
         if self.n_components == 'auto':
-            self.chosen_n_components = self.search_best_n_components(self, X, y)
+            print('Start searching for the best number of PLS components.')
+            self.chosen_n_components = self._search_best_n_components(X, y)
+            print(f'The best number of components is {self.chosen_n_components}')
         else:
             self.chosen_n_components = self.n_components
         
@@ -86,5 +98,18 @@ class DeAge(DeAgeBaseEstimator):
     def _search_best_n_components(self,
                                   X: pd.DataFrame, 
                                   y: Union[pd.DataFrame, list, np.ndarray, pd.Series]) -> int:
-        # TODO
-        return 1
+        best_score = 0
+        best_n_components = 1
+        cv = ShuffleSplit(n_splits=self.n_splits, random_state=self.random_state)
+        for n_components in range(1, X.shape[1]):
+            _model = PLSRegression(n_components)
+            cv_scores = cross_val_score(_model, X, y, scoring='neg_mean_absolute_error', cv=cv)
+            mean_score = np.mean(cv_scores)
+            new_criterion = np.abs((mean_score - best_score) / best_score)
+            if new_criterion < self.rel_criterion:
+                break
+            else:
+                best_n_components = n_components
+                best_score = mean_score
+        return best_n_components
+        
