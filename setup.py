@@ -9,8 +9,6 @@ setup(
         'scikit-learn',
         'scipy',
         'statsmodels',
-        'mapply',
-        
     ],
     author_email='dmitrii.kriukov@skoltech.ru',
     zip_safe=False,
