@@ -54,6 +54,9 @@ class DeAge(DeAgeBaseEstimator):
         # Step1: fit projector
         self.pls = PLSRegression(n_components=self.chosen_n_components, scale=True)
         self.pls.fit(X, y)
+        #explained variance - it is not expected to be large.
+        total_var = np.var(X, axis=0).sum()
+        self.explained_variance_ratio_ = self.pls.x_scores_.var(ddof=1, axis=0) / total_var
 
         self.V = self.pls.x_weights_  #eigenvectors matrix
         self.L = self.pls.x_loadings_ #loadings matrix
@@ -112,4 +115,5 @@ class DeAge(DeAgeBaseEstimator):
                 best_n_components = n_components
                 best_score = mean_score
         return best_n_components
+    
         
