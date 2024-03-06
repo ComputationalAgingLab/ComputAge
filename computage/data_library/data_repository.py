@@ -8,14 +8,6 @@ import pandas as pd
 from tqdm.notebook import trange
 
 URL = 'http://localhost:9998/'
-OUT_DIR = 'datasets'
-
-import os
-import requests
-import pandas as pd
-from tqdm.notebook import trange
-
-URL = 'http://localhost:9998/'
 DATA_DIR = 'datasets'
 
 def download_file(url: str, out_path: str) -> None:
