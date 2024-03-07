@@ -92,10 +92,10 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
             https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html).
             This parameter strongly affects time of feature pre-selection. 
 
-        weighing : {'rse', 'r2', None}, default='rse'
+        weighing : {'rse', 'r2', 'r2|rse', None}, default='rse'
             Weights of small models in Klemera-Doubal objective. Note that 1/rse^2 is used in the original paper that
             corresponds the default 'rse' paremeter. However, other weighings can be useful in some situations such as
-            'r2' or even no weights ('None' corresponds to all weights equal to 1).
+            'r2', 'r2/rse' or even no weights ('None' corresponds to all weights equal to 1).
         
         max_features : int, default=10000
             Maximum number of features from which a method will select (features are ordered by absolute Pearson 
@@ -394,6 +394,8 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
                     model['weight'] = model['rse']
                 elif self.weighing == 'r2':
                     model['weight'] = 1 / np.sqrt(model['r2'])
+                elif self.weighing == 'r2|rse':
+                    model['weight'] = model['rse'] / np.sqrt(model['r2'])
                 else:
                     model['weight'] = 1.0
 

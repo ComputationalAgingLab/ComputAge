@@ -1,6 +1,6 @@
 from deage.base import DeAgeBaseEstimator
 
-class AutoDeAge(DeAgeBaseEstimator):
+class AutoModel(DeAgeBaseEstimator):
     """
     The Great AutoDeAge Estimator!
     This automatically decides which of estimators is better 

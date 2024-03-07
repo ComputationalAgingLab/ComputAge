@@ -9,9 +9,9 @@ from typing import Union, List
 
 from .base import DeAgeBaseEstimator
 
-class DeAge(DeAgeBaseEstimator):
+class PLS1(DeAgeBaseEstimator):
     """
-    The Great DeAge Estimator!
+    The Great PLS1 Estimator!
     Implements PLS dimensionality reduction with different regression heads for 
     age prediction.
     
