@@ -339,6 +339,8 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
             self._model['weight'] = self._model['rse']
         elif self.weighing == 'r2':
             self._model['weight'] = 1 / np.sqrt(self._model['r2'])
+        elif self.weighing == 'r2|rse':
+            self._model['weight'] = self._model['rse'] / np.sqrt(self._model['r2'])
         else:
             self._model['weight'] = 1.0
 
