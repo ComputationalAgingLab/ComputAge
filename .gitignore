@@ -1,6 +1,7 @@
 #data for testing
 data/
 playground.ipynb
+*.code-workspace
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
