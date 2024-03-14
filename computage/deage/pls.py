@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from typing import Union, List
 
+from .kdm import KlemeraDoubalEstimator
 from .base import DeAgeBaseEstimator
 
 class PLS1(DeAgeBaseEstimator):
@@ -67,6 +68,17 @@ class PLS1(DeAgeBaseEstimator):
             self.head.fit(self.pls.transform(X), y)
         elif self.head_estimator == 'gpr':
             pass #TODO add fit of GPR
+        elif self.head_estimator == 'kdm':
+            self.head = KlemeraDoubalEstimator(
+                                feature_selection_method='all',
+                                feature_pval_threshold=0.05,
+                                lasso_preselection=False,
+                                weighing='rse')
+            X_df = pd.DataFrame(self.pls.transform(X), 
+                                columns=['pls' + str(i) for i in range(self.chosen_n_components)],
+                                index=X.index
+                                )
+            self.head.fit(X_df, y)
         else:
             raise NotImplementedError
 
@@ -75,8 +87,11 @@ class PLS1(DeAgeBaseEstimator):
         input_indices = X.index.copy()
         #check if dataset contains NaN
         if ~np.isnan(X).any(axis=0).any(): 
-            X_ = self.pls.transform(X)
-            return self.head.predict(X_)
+            X_df = pd.DataFrame(self.pls.transform(X), 
+                    columns=['pls' + str(i) for i in range(self.chosen_n_components)],
+                    index=X.index
+                    )
+            return self.head.predict(X_df)
         else:
             #an attempt to vectorize a prediction of NaN-enriched dataset
             X_scaled = (X - self.pls._x_mean) / self.pls._x_std
@@ -95,7 +110,11 @@ class PLS1(DeAgeBaseEstimator):
 
             # resulting in a [n x k] matrix of transformed data
             Xp_scaled = np.sum(X_scaled * Rnew, axis=1)
-            y_pred = self.head.predict(Xp_scaled)
+            X_df = pd.DataFrame(Xp_scaled, 
+                    columns=['pls' + str(i) for i in range(self.chosen_n_components)],
+                    index=X.index
+                    )
+            y_pred = self.head.predict(X_df)
             return pd.Series(data=y_pred, index=input_indices)
     
     def _search_best_n_components(self,
