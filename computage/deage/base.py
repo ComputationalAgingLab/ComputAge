@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from sklearn.base import BaseEstimator
 import numpy as np
 import pandas as pd
+#from util import get_model_file
 
 class PublishedClocksBaseEstimator(BaseEstimator, ABC):
     """
@@ -20,8 +21,15 @@ class PublishedClocksBaseEstimator(BaseEstimator, ABC):
         pass
 
     @abstractmethod
+    def fit(self, X, y):
+        ...
+
+    @abstractmethod
     def predict(self, X):
         ...
+
+
+
 
 
 class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):    
@@ -47,7 +55,26 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
         return None
     
     @abstractmethod
-    def fit(self, X, y):
+    def predict(self, X, y):
         ...
     
+class LinearMethylationModel(PublishedClocksBaseEstimator):
+    def __init__(
+        self, model_file_path, transform, preprocess=None) -> None:
+        self.transform = transform
+        self.model_file_path = model_file_path
+        self.model_data = pd.read_csv(self.model_file_path)
+        self.features = self.model_data[['Feature_ID']]
+        self.coefficients = self.model_data[['Coef']]
+        self.preprocess = preprocess
+
+    def fit(self,X,y):
+            self.is_fitted_ = True
+
+    def predict(self, X):
+        """
+        X - датасет для распознавания, принимает в себя FeatureID, 
+        """    
+
+        pass
 
