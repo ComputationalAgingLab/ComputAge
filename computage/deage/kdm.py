@@ -12,7 +12,6 @@ from sklearn.metrics import median_absolute_error, mean_squared_error, r2_score
 from statsmodels.stats.multitest import multipletests
 import pickle
 from typing import Union, Optional
-
 from .base import DeAgeBaseEstimator
 
 
@@ -320,7 +319,6 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
 
         #train all estimators
         if self.verbose > 0: print('Training estimators on full data.')
-        # mapply.init(n_workers=self.n_jobs, chunk_size=100, max_chunks_per_worker=10, progressbar=False)
         self._model = X.apply(lambda x: _fit_feature(y, x), result_type='expand').reset_index(drop=True).rename(index={
                                                                                                  0: 'slope', 
                                                                                                  1: 'intercept', 
