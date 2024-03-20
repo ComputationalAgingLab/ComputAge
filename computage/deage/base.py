@@ -40,7 +40,7 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
         assert ~np.any(np.isnan(y)), "Input y contains NaN"
 
         # X is allowed to contain NaN values, but each column should contain at least one non-Nan value
-        assert isinstance(X, pd.DataFrame), "Input X should be a pandas.DataFrame"
+        # assert isinstance(X, pd.DataFrame), "Input X should be a pandas.DataFrame"
         assert np.all(~np.all(np.isnan(X), 0)), "Input X contains columns with NaN only"
         assert np.all(~np.all(np.isnan(X), 1)), "Input X contains rows with NaN only"
 

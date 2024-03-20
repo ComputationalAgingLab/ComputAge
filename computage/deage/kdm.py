@@ -303,6 +303,11 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
         self.y_avg = np.mean(y)
         self.y_max = np.max(y)
         self.y_min = np.min(y)
+        
+        #for compatibility with sklearn
+        if type(X) == np.ndarray:
+            X = pd.DataFrame(X, 
+                             columns=['X' + str(i) for i in range(X.shape[1])])
         #drop columns with more than `nan_train_threshold` of nans or infs
         X = X.loc[:, np.isfinite(X).sum(axis=0) / X.shape[0] >= self.nan_train_threshold].copy()
 
@@ -434,6 +439,9 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
         if self.verbose > 0: print('Finished!')
            
     def predict(self, X, feature_names=None):
+        #make compatible with sklearn
+        if type(X) == np.ndarray:
+            X = pd.DataFrame(X, columns=['X' + str(i) for i in range(X.shape[1])])
         if self.train_mode:
             return self._predict_vectorized(self.model, X, feature_names=None)  
         else:
