@@ -2,19 +2,22 @@
 The module for getting datasets from the data repository of that project.
 """
 
-from typing import Any
 import pandas as pd
 import re
-import pandas as pd
+import gdown
 
 
-def import_data(path_name: str) -> pd.DataFrame():
+def import_data(file_name: str, url: str) -> pd.DataFrame():
     """
+    Downloads then parses file .txt with data from Illumina sequencing to dataframe
 
-    :param path_name: path to txt
-    :return:
+    :param file_name: name of sample data (.txt) in GoogleDrive
+    :param url: link to file on disk
+    :return: pd.DataFrame (rows = Feature_ID, columns = name of sample)
     """
-    with open(path_name, "r") as file:
+    gdown.download(url, file_name, quiet=False, fuzzy=True)
+
+    with open(file_name, "r") as file:
         for line in file:
             if re.match(r"^!series_matrix_table_begin", line):
                 break
@@ -27,6 +30,8 @@ def import_data(path_name: str) -> pd.DataFrame():
 
     return df
 
-#example
-# filename = "GSE41169_series_matrix.txt"
 
+# Example:
+# SAMPLE_ID = 'GSE41169_series_matrix.txt'
+# URL = 'https://drive.google.com/file/d/1cZca-FHnfeUerXJOzqhnH34mUYjNOgba/view?usp=sharing'
+# data_test = import_data(SAMPLE_ID, URL)
