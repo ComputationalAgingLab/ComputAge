@@ -12,6 +12,7 @@ from sklearn.metrics import median_absolute_error, mean_squared_error, r2_score
 from statsmodels.stats.multitest import multipletests
 import pickle
 from .base import DeAgeBaseEstimator
+from computage.analyzer.timecourse import linear_time_analysis
 
 
 class KlemeraDoubalEstimator(DeAgeBaseEstimator):    

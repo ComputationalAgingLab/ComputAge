@@ -2,7 +2,7 @@
 data/
 playground.ipynb
 *.code-workspace
-scikit.ipynb
+test_spot.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

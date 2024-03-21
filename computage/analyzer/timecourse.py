@@ -2,10 +2,16 @@ from scipy.stats import linregress
 from sklearn.metrics import r2_score
 import numpy as np
 import pandas as pd
+import mapply
 
 def linear_time_analysis(data: pd.DataFrame, 
-                         age: np.ndarray | pd.Series
+                         age: np.ndarray | pd.Series,
+                         n_jobs: int | None = 1
                          ) -> pd.DataFrame:
+    """
+        parameters:
+            - n_jobs - number of cores running the analysis in parallel
+    """
     def _fit_feature(x):
         y = age.copy()
         idx = np.isfinite(x) #y should always be finite
@@ -21,11 +27,13 @@ def linear_time_analysis(data: pd.DataFrame,
         s_res, i_res, r_res, p_res, _ = linregress(y, residuals)
         return s, i, r, p, serr, rse, r2, s_res, i_res, r_res, p_res
     
-    #TODO: solve problem with mapply
-    # mapply.init(n_workers=self.n_jobs, chunk_size=100, max_chunks_per_worker=10, progressbar=False)
-    return data.apply(_fit_feature, result_type='expand')\
-                .reset_index(drop=True)\
-                .rename(index={
+    if (n_jobs is None) or (n_jobs < 1):
+        result = data.apply(_fit_feature, result_type='expand')
+    else:
+        mapply.init(n_workers=n_jobs, chunk_size=100, max_chunks_per_worker=8, progressbar=False)
+        result = data.mapply(_fit_feature, result_type='expand')
+    return result.reset_index(drop=True)\
+                 .rename(index={
                     0: 'slope', 
                     1: 'intercept', 
                     2: 'rvalue', 
