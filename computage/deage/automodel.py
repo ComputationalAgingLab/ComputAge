@@ -11,4 +11,10 @@ class AutoModel(DeAgeBaseEstimator):
 
     def __init__(self, verbose=0):
         super().__init__()
+
+    def fit(self, X, y):
+        pass
+
+    def predict(self, X, y):
+        pass
         

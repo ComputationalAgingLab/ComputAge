@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from sklearn.base import BaseEstimator
+import warnings
 import numpy as np
 import pandas as pd
 
@@ -40,7 +41,8 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
         assert ~np.any(np.isnan(y)), "Input y contains NaN"
 
         # X is allowed to contain NaN values, but each column should contain at least one non-Nan value
-        # assert isinstance(X, pd.DataFrame), "Input X should be a pandas.DataFrame"
+        if not isinstance(X, pd.DataFrame):
+            warnings.warn('X is not pandas.DataFrame type. Arbitrary feature names will be assigned!')
         assert np.all(~np.all(np.isnan(X), 0)), "Input X contains columns with NaN only"
         assert np.all(~np.all(np.isnan(X), 1)), "Input X contains rows with NaN only"
 

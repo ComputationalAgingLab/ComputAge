@@ -16,12 +16,20 @@ class PLS1(DeAgeBaseEstimator):
     Implements PLS dimensionality reduction with different regression heads for 
     age prediction.
     
-    n_components: {int, str} - number of PLS components. 'auto' - use auto for 
-        seaching the best number of components based on the MAE of prediction.
+    parameters:
+        head_estimator: str - ['linear', 'gpr', 'kdm', 'rf']
 
-    head_estimator: str - ['linear', 'gpr', 'kdm', 'rf']
+        n_components: {int, str} - number of PLS components. 'auto' - use auto for 
+            seaching the best number of components based on the MAE of prediction.
+        
+        n_splits : int - number of cross validation splits for best components selection
 
-    TODO docstring
+        rel_criterion: float - relative error upon achieving which the search of 
+            best number of components stops.
+
+        random_state {int, None} - random state for cross validation shuffle split.
+
+        TODO docstring for other parameters when they will be added
     """
 
     def __init__(self, 
