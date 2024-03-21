@@ -52,4 +52,3 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
     def fit(self, X, y):
         ...
     
-

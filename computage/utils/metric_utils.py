@@ -36,3 +36,4 @@ def print_metrics(y_true: Union[pd.Series, np.ndarray],
     print(f"r = {r:.3f}")
     if return_result:
         return (mae, r2, r, pval_r)
+    

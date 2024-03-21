@@ -142,5 +142,4 @@ class PLS1(DeAgeBaseEstimator):
                 best_n_components = n_components
                 best_score = mean_score
         return best_n_components
-    
-        
+           
