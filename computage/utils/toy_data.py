@@ -1,12 +1,11 @@
 import numpy as np
 import pandas as pd
-from typing import Union
 
 def generate_toy_data(n: int, 
                       p: float, 
                       n_signif_feat: int = 10, 
                       data_model_type: str = 'y->x', 
-                      random_seed: Union[int, None] = None) -> pd.DataFrame:
+                      random_seed: int | None = None) -> pd.DataFrame:
     """
         Generate sythetic dataset with respect to particula underlying 
         model assumptions.

@@ -5,7 +5,6 @@ from sklearn.gaussian_process.kernels import DotProduct, WhiteKernel, RBF
 from sklearn.model_selection import cross_val_score, ShuffleSplit
 import numpy as np
 import pandas as pd
-from typing import Union, List
 
 from .kdm import KlemeraDoubalEstimator
 from .base import DeAgeBaseEstimator
@@ -33,11 +32,11 @@ class PLS1(DeAgeBaseEstimator):
     """
 
     def __init__(self, 
-                 n_components: Union[int, str] = 2, 
+                 n_components: int | str = 2, 
                  head_estimator: str = 'linear',
                  n_splits: int = 5,
                  rel_criterion: float = 1e-2,
-                 random_state: Union[int, None] = None
+                 random_state: int | None = None
                  ):
         super().__init__()
         
@@ -49,7 +48,7 @@ class PLS1(DeAgeBaseEstimator):
 
     def fit(self, 
             X: pd.DataFrame, 
-            y: Union[pd.DataFrame, list, np.ndarray, pd.Series]) -> None:
+            y: pd.DataFrame | list | np.ndarray | pd.Series) -> None:
         #store feature names
         self.train_features = X.columns
 
@@ -100,34 +99,34 @@ class PLS1(DeAgeBaseEstimator):
                     index=X.index
                     )
             return self.head.predict(X_df)
-        else:
-            #an attempt to vectorize a prediction of NaN-enriched dataset
-            X_scaled = (X - self.pls._x_mean) / self.pls._x_std
-            mask = np.isfinite(X_scaled).to_numpy()[:, :, None]
+        
+        #an attempt to vectorize a prediction of NaN-enriched dataset
+        X_scaled = (X - self.pls._x_mean) / self.pls._x_std
+        mask = np.isfinite(X_scaled).to_numpy()[:, :, None]
 
-            #saving and masking transforming matrices
-            Vnew = np.repeat(self.V[None, :, :], X_scaled.shape[0], axis=0) * mask #[n x p x k]
-            Lnew = np.repeat(self.L[None, :, :], X_scaled.shape[0], axis=0) * mask
+        #saving and masking transforming matrices
+        Vnew = np.repeat(self.V[None, :, :], X_scaled.shape[0], axis=0) * mask #[n x p x k]
+        Lnew = np.repeat(self.L[None, :, :], X_scaled.shape[0], axis=0) * mask
 
-            LVprod = np.matmul(np.transpose(Lnew, (0, 2, 1)), Vnew)
-            LVinv = map(lambda n: np.linalg.pinv(n), LVprod) #<- TODO: check if it is bad, performance bottleneck?
-            LVinv = np.asarray(list(LVinv))
-            Rnew = np.matmul(Vnew, LVinv) #construct a new rotation matrix
+        LVprod = np.matmul(np.transpose(Lnew, (0, 2, 1)), Vnew)
+        LVinv = map(np.linalg.pinv, LVprod) #<- TODO: check if it is bad, performance bottleneck?
+        LVinv = np.asarray(list(LVinv))
+        Rnew = np.matmul(Vnew, LVinv) #construct a new rotation matrix
 
-            X_scaled = X_scaled.fillna(0.).to_numpy()[:, :, np.newaxis]
+        X_scaled = X_scaled.fillna(0.).to_numpy()[:, :, np.newaxis]
 
-            # resulting in a [n x k] matrix of transformed data
-            Xp_scaled = np.sum(X_scaled * Rnew, axis=1)
-            X_df = pd.DataFrame(Xp_scaled, 
-                    columns=['pls' + str(i) for i in range(self.chosen_n_components)],
-                    index=X.index
-                    )
-            y_pred = self.head.predict(X_df)
-            return pd.Series(data=y_pred, index=input_indices)
+        # resulting in a [n x k] matrix of transformed data
+        Xp_scaled = np.sum(X_scaled * Rnew, axis=1)
+        X_df = pd.DataFrame(Xp_scaled, 
+                columns=['pls' + str(i) for i in range(self.chosen_n_components)],
+                index=X.index
+                )
+        y_pred = self.head.predict(X_df)
+        return pd.Series(data=y_pred, index=input_indices)
     
     def _search_best_n_components(self,
                                   X: pd.DataFrame, 
-                                  y: Union[pd.DataFrame, list, np.ndarray, pd.Series]) -> int:
+                                  y: pd.DataFrame | list | np.ndarray | pd.Series) -> int:
         best_score = 0
         best_n_components = 1
         cv = ShuffleSplit(n_splits=self.n_splits, random_state=self.random_state)
@@ -138,8 +137,7 @@ class PLS1(DeAgeBaseEstimator):
             new_criterion = np.abs((mean_score - best_score) / best_score)
             if new_criterion < self.rel_criterion:
                 break
-            else:
-                best_n_components = n_components
-                best_score = mean_score
+            best_n_components = n_components
+            best_score = mean_score
         return best_n_components
            

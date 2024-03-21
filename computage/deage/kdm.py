@@ -11,7 +11,6 @@ from sklearn.linear_model import LassoCV
 from sklearn.metrics import median_absolute_error, mean_squared_error, r2_score
 from statsmodels.stats.multitest import multipletests
 import pickle
-from typing import Union, Optional
 from .base import DeAgeBaseEstimator
 
 
@@ -19,7 +18,7 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
     def __init__(self, 
                  cv: int = 10,
                  cv_val_size: float = 0.2,
-                 cv_stratify: Union[np.ndarray, pd.Series] | None = None,
+                 cv_stratify: np.ndarray | pd.Series | None = None,
                  feature_selection_method: str = 'forward',
                  feature_selection_criterion: str = 'mse',
                  feature_pval_threshold: float = 0.5,
@@ -554,36 +553,6 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
     #             ax.set_ylim([-1, 1.05])
     #     sns.despine(fig=fig)
     #     plt.show()
-
-    def load_model(self, path):
-        with open(path, 'rb') as f:
-            model_state = pickle.load(f)
-        self._model = model_state['model']
-        self.features = model_state['features']
-        self.model = self._model.loc[self.features]
-        self.feature_selection_method = model_state['fs_method']
-        self.feature_selection_criterion = model_state['fs_criterion']
-        self.best_n_features = model_state['best_n']
-        self.best_pct_features = model_state['best_pct']
-        self.metrics = model_state['metrics']
-        self.Bvar_dict = model_state['Bvar']
-        self.y_avg = model_state['y_avg']
-        self.Bvar_, self.BECvar_, self.BEBvar_, self.BECBvar_, self.rchar_ = self.Bvar_dict.values()
-        self.train_mode = False
-
-    def save_model(self, path):
-        model_state = {'model':self._model, 
-                       'features':self.features,
-                       'fs_method':self.feature_selection_method,
-                       'fs_criterion':self.feature_selection_criterion,
-                       'best_n':self.best_n_features,
-                       'best_pct':self.best_pct_features,
-                       'metrics':self.metrics,
-                       'Bvar':self.Bvar_dict,
-                       'y_avg':self.y_avg
-                       }
-        with open(path, 'wb') as f:
-            pickle.dump(model_state, f)
         
         
 ### TODO from Dmitrii

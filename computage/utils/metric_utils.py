@@ -2,12 +2,11 @@ from sklearn.metrics import r2_score, mean_absolute_error
 from scipy.stats import pearsonr
 import pandas as pd
 import numpy as np
-from typing import Union
 
-def print_metrics(y_true: Union[pd.Series, np.ndarray], 
-                  y_pred: Union[pd.Series, np.ndarray], 
+def print_metrics(y_true: pd.Series | np.ndarray, 
+                  y_pred: pd.Series | np.ndarray, 
                   return_result: bool = False
-                  ) -> Union[None, tuple[float, ...]]:
+                  ) -> None | tuple[float, ...]:
     """
         Shortcut for printing all necessary metrics for aging clocks validation.
         Currently computes the following metrics:

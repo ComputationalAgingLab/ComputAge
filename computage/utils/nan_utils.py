@@ -1,10 +1,9 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model._base import LinearModel
-from typing import Union
 
-def EN_nan_row_predict(X: Union[np.ndarray, pd.DataFrame], 
-                       model: LinearModel) -> Union[pd.DataFrame, np.ndarray]:
+def EN_nan_row_predict(X: np.ndarray | pd.DataFrame, 
+                       model: LinearModel) -> pd.DataFrame | np.ndarray:
     """
         This function allows a linear model to predict dataset with NaNs
         without any imputations.

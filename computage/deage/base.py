@@ -17,11 +17,13 @@ class PublishedClocksBaseEstimator(BaseEstimator, ABC):
     def features_interpretation(self):
         pass
 
-    def map_features(self, assembly='all'):
+    def map_features(self, 
+                     assembly: str = 'all'):
         pass
 
     @abstractmethod
-    def predict(self, X):
+    def predict(self, 
+                X: pd.DataFrame | np.ndarray):
         ...
 
 
@@ -31,12 +33,11 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
     The key difference of DeAge-based model is their capability of working
     with NaN-enriched data
     """
-    # https://docs.python.org/3/library/abc.html
-    # @abstractmethod
-    # def fit(self, X, y):
-    #     pass
 
-    def _validate_data(self, X, y):
+    def _validate_data(self, 
+                       X: pd.DataFrame | np.ndarray, 
+                       y: pd.Series | np.ndarray
+                       ):
         # always need y to be without NaN values
         assert ~np.any(np.isnan(y)), "Input y contains NaN"
 
@@ -49,6 +50,9 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
         return None
     
     @abstractmethod
-    def fit(self, X, y):
+    def fit(self,
+            X: pd.DataFrame | np.ndarray, 
+            y: pd.Series | np.ndarray
+            ):
         ...
     

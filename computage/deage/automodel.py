@@ -1,4 +1,5 @@
 from deage.base import DeAgeBaseEstimator
+import pandas as pd
 
 class AutoModel(DeAgeBaseEstimator):
     """
@@ -12,9 +13,13 @@ class AutoModel(DeAgeBaseEstimator):
     def __init__(self, verbose=0):
         super().__init__()
 
-    def fit(self, X, y):
+    def fit(self, 
+            X: pd.DataFrame, 
+            y: pd.Series):
         pass
 
-    def predict(self, X, y):
+    def predict(self, 
+                X: pd.DataFrame, 
+                y: pd.Series):
         pass
         
