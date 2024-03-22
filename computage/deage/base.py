@@ -65,7 +65,7 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         self.model_file_path = model_file_path
         self.model_data = pd.read_csv(self.model_file_path)
         self.features = self.model_data[['Feature_ID']]
-        self.coefficients = self.model_data[['Coef']]
+        self.coefficients = np.array(self.model_data[['Coef']])
         self.preprocess = preprocess
 
     def fit(self,X,y):
@@ -75,7 +75,17 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         """
         X - датасет для распознавания, принимает в себя pandas 
         table with Feature1, F2, F3 для всех строк (на пересечениях циферки)
-        """    
+        """
+        samples = list(X.columns)[1:]    
+        X[samples] = X[samples].apply(pd.to_numeric)
+        X_merged = X.merge(self.model_data, left_on='ID_REF', right_on='Feature_ID', how='right')
+        vectors = np.array(X_merged[samples].to_numpy())
+        prediction = np.matmul( self.coefficients.transpose(), vectors)
+        pd_prediction = pd.DataFrame()
+        pd_prediction['sample'] = samples
+        pd_prediction['predictions'] = prediction.transpose()
+        
+        return(pd_prediction)
 
-        pass
+        
 

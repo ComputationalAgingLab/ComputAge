@@ -31,6 +31,8 @@ def import_data(file_name: str, url: str) -> pd.DataFrame(): # type: ignore
         df = df[1:]
         df = df.reset_index(drop=True)
         df.ID_REF = df.ID_REF.str.replace('"', '')
+        samples = list(df.columns)[1:]
+        df[samples] = df[samples].apply(pd.to_numeric)
         df.drop(df.tail(1).index, inplace=True)
 
     return df
