@@ -5,6 +5,7 @@ The module for getting datasets from the data repository of that project.
 import pandas as pd
 import re
 import gdown
+import os
 
 
 def import_data(file_name: str, url: str) -> pd.DataFrame(): # type: ignore
@@ -15,7 +16,8 @@ def import_data(file_name: str, url: str) -> pd.DataFrame(): # type: ignore
     :param url: link to file on disk
     :return: pd.DataFrame (rows = Feature_ID, columns = name of sample)
     """
-    gdown.download(url, file_name, quiet=False, fuzzy=True)
+    if not os.path.exists(file_name):
+        gdown.download(url, file_name, quiet=False, fuzzy=True)
 
     with open(file_name, "r") as file:
         for line in file:
@@ -24,7 +26,8 @@ def import_data(file_name: str, url: str) -> pd.DataFrame(): # type: ignore
 
         df = []
         for line in file:
-            df.append(line.split()[0:3])
+            df.append(line.split()[0:30])
+        print(len(df), len(df[0]))
         df = pd.DataFrame(df)
         df.columns = df.iloc[0]
         df.columns = df.columns.str.replace('"', '')
