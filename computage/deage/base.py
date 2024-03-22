@@ -60,7 +60,7 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
     
 class LinearMethylationModel(PublishedClocksBaseEstimator):
     def __init__(
-        self, model_file_path, transform, preprocess=None) -> None:
+        self, model_file_path, transform=None, preprocess=None) -> None:
         self.transform = transform
         self.model_file_path = model_file_path
         self.model_data = pd.read_csv(self.model_file_path)
@@ -83,8 +83,8 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         prediction = np.matmul( self.coefficients.transpose(), vectors)
         pd_prediction = pd.DataFrame()
         pd_prediction['sample'] = samples
-        pd_prediction['predictions'] = prediction.transpose()
-        
+        pd_prediction['prediction'] = prediction.transpose()
+
         return(pd_prediction)
 
         
