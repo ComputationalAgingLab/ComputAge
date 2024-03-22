@@ -7,7 +7,7 @@ import re
 import gdown
 
 
-def import_data(file_name: str, url: str) -> pd.DataFrame():
+def import_data(file_name: str, url: str) -> pd.DataFrame(): # type: ignore
     """
     Downloads then parses file .txt with data from Illumina sequencing to dataframe
 
@@ -26,6 +26,13 @@ def import_data(file_name: str, url: str) -> pd.DataFrame():
         for line in file:
             df.append(line.split()[0:3])
         df = pd.DataFrame(df)
+        df.columns = df.iloc[0]
+        df.columns = df.columns.str.replace('"', '')
+        df = df[1:]
+        df = df.reset_index(drop=True)
+        df.ID_REF = df.ID_REF.str.replace('"', '')
+        samples = list(df.columns)[1:]
+        df[samples] = df[samples].apply(pd.to_numeric)
         df.drop(df.tail(1).index, inplace=True)
 
     return df

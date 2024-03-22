@@ -162,3 +162,5 @@ computage/models_library/lookbioleran.ipynb
 
 # IDE
 .idea
+computage/data_library/data_test.csv
+computage/deage/GSE41169_series_matrix.txt
