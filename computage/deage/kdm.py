@@ -564,4 +564,3 @@ class KlemeraDoubalEstimator(DeAgeBaseEstimator):
 
 ### TODO from Evgeniy
 ## change weights in KD calculation from s to a and place them to the nominator
-    

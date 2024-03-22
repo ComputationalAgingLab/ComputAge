@@ -22,4 +22,3 @@ class AutoModel(DeAgeBaseEstimator):
                 X: pd.DataFrame, 
                 y: pd.Series):
         pass
-        

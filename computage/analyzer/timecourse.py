@@ -32,7 +32,7 @@ def linear_time_analysis(data: pd.DataFrame,
     else:
         mapply.init(n_workers=n_jobs, chunk_size=100, max_chunks_per_worker=8, progressbar=False)
         result = data.mapply(_fit_feature, result_type='expand')
-    return result.reset_index(drop=True)\
+    return result.reset_index(drop=True) \
                  .rename(index={
                     0: 'slope', 
                     1: 'intercept', 

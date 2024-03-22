@@ -19,4 +19,3 @@ def test_dataset(path: str, compression: str = 'gzip') -> None:
     assert all(data.dtypes == np.float32), 'Type of dataframe entries is not float32!'
     assert all(data.index == meta.index), 'Indices of data and meta are not equal!'
     print('Ok!')
-    

@@ -55,4 +55,3 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
             y: pd.Series | np.ndarray
             ):
         ...
-    
