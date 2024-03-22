@@ -7,7 +7,7 @@ import re
 import gdown
 
 
-def import_data(file_name: str, url: str) -> pd.DataFrame():
+def import_data(file_name: str, url: str) -> pd.DataFrame(): # type: ignore
     """
     Downloads then parses file .txt with data from Illumina sequencing to dataframe
 

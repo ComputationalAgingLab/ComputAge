@@ -73,7 +73,8 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
 
     def predict(self, X):
         """
-        X - датасет для распознавания, принимает в себя FeatureID, 
+        X - датасет для распознавания, принимает в себя pandas 
+        table with Feature1, F2, F3 для всех строк (на пересечениях циферки)
         """    
 
         pass
