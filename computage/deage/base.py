@@ -3,6 +3,7 @@ from sklearn.base import BaseEstimator
 import warnings
 import numpy as np
 import pandas as pd
+import pickle
 
 class PublishedClocksBaseEstimator(BaseEstimator, ABC):
     """
@@ -55,3 +56,6 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
             y: pd.Series | np.ndarray
             ):
         ...
+
+    def save_model(self, path):
+        pickle.dump(self, open(path, 'wb'))

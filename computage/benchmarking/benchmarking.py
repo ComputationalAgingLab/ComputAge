@@ -45,7 +45,7 @@ class EpiClocksBenchmarking:
             path, _, _ = conf.values()
             assert exists(path), f'A dataset file {gse} does not exist at the path!'
 
-    def download_datasets(self):
+    def download_datasets(self): #TODO: add downloader for files
         pass
 
     def run(self) -> None:
