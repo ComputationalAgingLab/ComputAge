@@ -1,6 +1,7 @@
 #data for testing
 data/
 figures/
+tmp/
 playground.ipynb
 *.code-workspace
 test_spot.ipynb
