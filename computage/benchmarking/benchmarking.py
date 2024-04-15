@@ -12,6 +12,7 @@ class EpiClocksBenchmarking:
                  models_config: dict,
                  datasets_config: dict,
                  experiment_prefix: str = 'test', 
+                 test_age_prediction: bool = True,
                  correction_threshold: float = 0.05,
                  save_results: bool = True,
                  output_folder: str ='./bench_results', 
@@ -29,6 +30,7 @@ class EpiClocksBenchmarking:
         self.save_results = save_results
         self.output_folder = output_folder
         self.experiment_prefix = experiment_prefix
+        self.test_age_prediction = test_age_prediction
         self.correction_threshold = correction_threshold
         self.verbose = verbose
         print(f'{self.n_models} models will be tested on {self.n_datasets} datasets.')
@@ -54,9 +56,10 @@ class EpiClocksBenchmarking:
         self.check_existence()
 
         #go!
-        self.bench_results_AAP = pd.DataFrame()
-        self.bench_results_AA0 = pd.DataFrame()
+        self.bench_results_AA2 = pd.DataFrame()
+        self.bench_results_AA1 = pd.DataFrame()
         self.datasets_predictions = {}
+        self.datasets_metadata = {}
 
         ###Predict datasets and gather predictions
         for gse, conf in tqdm(self.datasets_config.items(), 
@@ -97,25 +100,32 @@ class EpiClocksBenchmarking:
 
             pred = pd.DataFrame(predictions)
             self.datasets_predictions[gse] = pred.copy()
+            meta['GSE'] = gse
+            self.datasets_metadata[gse] = meta.copy()
             #meta filtering
             no_age_na_indices = meta[~meta['Age'].isna()].index
             meta = meta.loc[no_age_na_indices]
 
-            if test == 'AAP':
-                pvals = self.AAP_test(pred, meta, gse, cond)
-                self.bench_results_AAP[f'{cond}:{gse}:AAP'] = pd.Series(pvals)
-            elif test == 'AA0': 
-                pvals = self.AA0_test(pred, meta, gse, cond)
-                self.bench_results_AA0[f'{cond}:{gse}:AA0'] = pd.Series(pvals)
+            if test == 'AA2':
+                pvals = self.AA2_test(pred, meta, gse, cond)
+                self.bench_results_AA2[f'{cond}:{gse}:AA2'] = pd.Series(pvals)
+            elif test == 'AA1': 
+                pvals = self.AA1_test(pred, meta, gse, cond)
+                self.bench_results_AA1[f'{cond}:{gse}:AA1'] = pd.Series(pvals)
             else:
-                NotImplementedError("Following tests are currently available: ['AAP', 'AA0'].")
+                NotImplementedError("Following tests are currently available: ['AA2', 'AA1'].")
+            
         
         #multiple testing correction of results. Note each model's pvalues are corrected individually.
-        self.bench_results = pd.concat([self.bench_results_AAP, self.bench_results_AA0], axis=1)
-        corrected_results_AAP = self.bench_results_AAP.T.apply(self.correction, axis=0).T 
-        corrected_results_AA0 = self.bench_results_AA0.T.apply(self.correction, axis=0).T 
-        self.corrected_results = pd.concat([corrected_results_AAP, corrected_results_AA0], axis=1)
+        self.bench_results = pd.concat([self.bench_results_AA2, self.bench_results_AA1], axis=1)
+        corrected_results_AA2 = self.bench_results_AA2.T.apply(self.correction, axis=0).T 
+        corrected_results_AA1 = self.bench_results_AA1.T.apply(self.correction, axis=0).T 
+        self.corrected_results = pd.concat([corrected_results_AA2, corrected_results_AA1], axis=1)
         self.corrected_results_bool = self.corrected_results < self.correction_threshold
+
+        #optional test of chronological age prediction accuracy
+        if self.test_age_prediction:
+            self.CA_prediction_results = self.CA_prediction_test()
 
         if self.save_results:
             self.bench_results.to_csv(os.path.join(self.output_folder, 
@@ -124,6 +134,8 @@ class EpiClocksBenchmarking:
                                                        f'{self.experiment_prefix}_bench_adj_pvals.csv'))
             self.corrected_results_bool.to_csv(os.path.join(self.output_folder, 
                                                        f'{self.experiment_prefix}_bench_bools.csv'))
+            self.CA_prediction_results.to_csv(os.path.join(self.output_folder, 
+                                                       f'{self.experiment_prefix}_bench_CA_pred_MAE.csv'))
             
 
     def biolearn_predict(self, dnam, meta, model_key, imputation_method='none'):
@@ -136,12 +148,12 @@ class EpiClocksBenchmarking:
                               imputation_method=imputation_method).predict(data)
         return results['Predicted']
 
-    def AAP_test(self, pred, meta, gse, cond):
+    def AA2_test(self, pred, meta, gse, cond):
         #calculating mann-whitney test for difference in age acceleration between disease and healthy cohorts
         disease_idx = meta.index[meta['Condition'] == cond]
         healthy_idx = meta.index[meta['Condition'] == 'HC']
         if self.verbose > 0:
-            print(f'{cond}:{gse} - AAP testing {len(disease_idx)} disease versus {len(healthy_idx)} healthy samples')
+            print(f'{cond}:{gse} - AA2 testing {len(disease_idx)} disease versus {len(healthy_idx)} healthy samples')
         pvals = {}
         for col in pred.columns:
             disease_true = meta.loc[disease_idx, 'Age'].values
@@ -154,11 +166,11 @@ class EpiClocksBenchmarking:
             pvals[col] = pval
         return pvals
 
-    def AA0_test(self, pred, meta, gse, cond):
+    def AA1_test(self, pred, meta, gse, cond):
         #calculating wilcoxon test for positive age (>0) acceleration in disease cohort
         disease_idx = meta.index[meta['Condition'] == cond]
         if self.verbose > 0:
-            print(f'{cond}:{gse} - AA0 testing {len(disease_idx)} disease samples')
+            print(f'{cond}:{gse} - AA1 testing {len(disease_idx)} disease samples')
         pvals = {}
         for col in pred.columns:
             disease_true = meta.loc[disease_idx, 'Age'].values
@@ -166,7 +178,21 @@ class EpiClocksBenchmarking:
             disease_delta = disease_pred - disease_true
             _, pval = wilcoxon(disease_delta, alternative='greater')
             pvals[col] = pval
-        return pvals        
+        return pvals    
+
+    def CA_prediction_test(self) -> pd.DataFrame:
+        full_meta = pd.concat(self.datasets_metadata.values(), axis=0)
+        full_pred = pd.concat(self.datasets_predictions.values(), axis=0)
+        hc_index = full_meta[~full_meta['Age'].isna() & (full_meta['Condition'] == 'HC')].index
+        hc_age = full_meta.loc[hc_index]['Age']
+        hc_pred = full_pred.loc[hc_index]
+        absdiff = np.abs(hc_pred.subtract(hc_age.values, axis=0))
+        if self.verbose > 0:
+            print(f'Compute MAE metric based on {absdiff.shape[0]} healthy control samples.')
+        result = pd.concat([absdiff.mean(axis=0), absdiff.sem(axis=0, ddof=1)], 
+                            keys=['MAE', 'MAE_SE'], axis=1).reset_index()
+        result = result.sort_values('MAE')
+        return result
     
     @staticmethod
     def check_predictions(preds: np.ndarray | pd.Series, 
