@@ -1,119 +1,371 @@
 # Configure datasets using for benchmarking of aging clock models.
 DATASETS_PREFIX = '/tank/projects/computage/benchmarking/'
 
-datasets_config = {
+
+datasets_config_main = {
+                    #CVD
+                    'GSE56046':{'path':f'{DATASETS_PREFIX}GSE56046.pkl.gz',
+                               'conditions':['AS'],
+                               'test':'AA2'
+                               },
+                    'GSE56581':{'path':f'{DATASETS_PREFIX}GSE56581.pkl.gz',
+                               'conditions':['AS'],
+                               'test':'AA2'
+                               },
+                    'GSE62867':{'path':f'{DATASETS_PREFIX}GSE62867.pkl.gz',
+                               'conditions':['IHD'],
+                               'test':'AA1'
+                               },
+                    'GSE69138':{'path':f'{DATASETS_PREFIX}GSE69138.pkl.gz',
+                               'conditions':['CVA'],
+                               'test':'AA1'
+                               },
+                    'GSE107143':{'path':f'{DATASETS_PREFIX}GSE107143.pkl.gz',
+                               'conditions':['AS'],
+                               'test':'AA2'
+                               },
+                    'GSE203399':{'path':f'{DATASETS_PREFIX}GSE203399.pkl.gz',
+                               'conditions':['CVA'],
+                               'test':'AA2'
+                               },
+                    #ISD
+                    'GSE32148':{'path':f'{DATASETS_PREFIX}GSE32148.pkl.gz',
+                               'conditions':['IBD'],
+                               'test':'AA2'
+                               },
+                    'GSE87640':{'path':f'{DATASETS_PREFIX}GSE87640.pkl.gz',
+                               'conditions':['IBD'],
+                               'test':'AA2'
+                               },
+                    'GSE87648':{'path':f'{DATASETS_PREFIX}GSE87648.pkl.gz',
+                               'conditions':['IBD'],
+                               'test':'AA2'
+                               },
+                    'GSE53840':{'path':f'{DATASETS_PREFIX}GSE53840.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE53841':{'path':f'{DATASETS_PREFIX}GSE53841.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE67705':{'path':f'{DATASETS_PREFIX}GSE67705.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA2'
+                               },
+                    'GSE67751':{'path':f'{DATASETS_PREFIX}GSE67751.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA2'
+                               },
+                    'GSE77696':{'path':f'{DATASETS_PREFIX}GSE77696.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA2'
+                               },
+                    'GSE100264':{'path':f'{DATASETS_PREFIX}GSE100264.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE107080':{'path':f'{DATASETS_PREFIX}GSE107080.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE117859':{'path':f'{DATASETS_PREFIX}GSE117859.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE117860':{'path':f'{DATASETS_PREFIX}GSE117860.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE140800':{'path':f'{DATASETS_PREFIX}GSE140800.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE143942':{'path':f'{DATASETS_PREFIX}GSE143942.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA2'
+                               },
+                    'GSE145714':{'path':f'{DATASETS_PREFIX}GSE145714.pkl.gz',
+                               'conditions':['HIV_TB', 'TB'], 
+                               'test':'AA2'
+                               },
+                    'GSE185389':{'path':f'{DATASETS_PREFIX}GSE185389.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE185390':{'path':f'{DATASETS_PREFIX}GSE185390.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA1'
+                               },
+                    'GSE217633':{'path':f'{DATASETS_PREFIX}GSE217633.pkl.gz',
+                               'conditions':['HIV'],
+                               'test':'AA2'
+                               },
+                    #MSD
+                    'GSE42861':{'path':f'{DATASETS_PREFIX}GSE42861.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA2'
+                               },    
+                    'GSE71841':{'path':f'{DATASETS_PREFIX}GSE71841.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA2'
+                               }, 
+                    'GSE99624':{'path':f'{DATASETS_PREFIX}GSE99624.pkl.gz',
+                               'conditions':['OP'],
+                               'test':'AA2'
+                               },        
+                    'GSE131989':{'path':f'{DATASETS_PREFIX}GSE131989.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA2'
+                               },  
+                    'GSE134429':{'path':f'{DATASETS_PREFIX}GSE134429.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA2'
+                               },   
+                    'GSE137593':{'path':f'{DATASETS_PREFIX}GSE137593.pkl.gz',
+                               'conditions':['OA', 'RA'],
+                               'test':'AA1'
+                               },       
+                    'GSE137594':{'path':f'{DATASETS_PREFIX}GSE137594.pkl.gz',
+                               'conditions':['OA', 'RA'],
+                               'test':'AA1'
+                               },       
+                    'GSE138653':{'path':f'{DATASETS_PREFIX}GSE138653.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA1'
+                               },   
+                    'GSE175364':{'path':f'{DATASETS_PREFIX}GSE175364.pkl.gz',
+                               'conditions':['OA', 'RA'],
+                               'test':'AA2'
+                               },
+                    'GSE176168':{'path':f'{DATASETS_PREFIX}GSE176168.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA1'
+                               },  
+                    'GSE228104':{'path':f'{DATASETS_PREFIX}GSE228104.pkl.gz',
+                               'conditions':['RA'],
+                               'test':'AA1'
+                               },        
+                    #MBD
+                    'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz',
+                               'conditions':['OBS', 'ASD'],
+                               'test':'AA2'
+                               },     
+                    'GSE56606':{'path':f'{DATASETS_PREFIX}GSE56606.pkl.gz',
+                               'conditions':['T1D'],
+                               'test':'AA2'
+                               },        
+                    'GSE62003':{'path':f'{DATASETS_PREFIX}GSE62003.pkl.gz',
+                               'conditions':['T2D'],
+                               'test':'AA1'
+                               },     
+                    'GSE73103':{'path':f'{DATASETS_PREFIX}GSE73103.pkl.gz',
+                               'conditions':['OBS'],
+                               'test':'AA2'
+                               }, 
+                    #LUD
+                    'GSE118468':{'path':f'{DATASETS_PREFIX}GSE118468.pkl.gz',
+                               'conditions':['COPD'],
+                               'test':'AA2'
+                               },       
+                    #PGS       
+                    'GSE131752':{'path':f'{DATASETS_PREFIX}GSE131752.pkl.gz',
+                               'conditions':['WS', 'aWS', 'MDPS'],
+                               'test':'AA2'
+                               },      
+                    'GSE182991':{'path':f'{DATASETS_PREFIX}GSE182991.pkl.gz',
+                               'conditions':['HGPS', 'ncLMNA'],
+                               'test':'AA2'
+                               },    
+                    'GSE214297':{'path':f'{DATASETS_PREFIX}GSE214297.pkl.gz',
+                               'conditions':['CGL'],
+                               'test':'AA2'
+                               },              
+                    #NDD                                                                                    
+                    'GSE43976':{'path':f'{DATASETS_PREFIX}GSE43976.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA2'
+                               },    
+                    'GSE59685':{'path':f'{DATASETS_PREFIX}GSE59685.pkl.gz',
+                               'conditions':['AD'],
+                               'test':'AA2'
+                               },                      
+                    'GSE72774':{'path':f'{DATASETS_PREFIX}GSE72774.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA2'
+                               },  
+                    'GSE72776':{'path':f'{DATASETS_PREFIX}GSE72776.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA2'
+                               },  
+                    'GSE78874':{'path':f'{DATASETS_PREFIX}GSE78874.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA2'
+                               },  
+                    'GSE103929':{'path':f'{DATASETS_PREFIX}GSE103929.pkl.gz',
+                               'conditions':['MS', 'OBS'],
+                               'test':'AA1'
+                               },  
+                    'GSE106648':{'path':f'{DATASETS_PREFIX}GSE106648.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA2'
+                               }, 
+                    'GSE111223':{'path':f'{DATASETS_PREFIX}GSE111223.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA2'
+                               },   
+                    'GSE111629':{'path':f'{DATASETS_PREFIX}GSE111629.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA2'
+                               },  
+                    'GSE112596':{'path':f'{DATASETS_PREFIX}GSE112596.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA1'
+                               },  
+                    'GSE130029':{'path':f'{DATASETS_PREFIX}GSE130029.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA2'
+                               },  
+                    'GSE130030':{'path':f'{DATASETS_PREFIX}GSE130030.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA2'
+                               },  
+                    'GSE130491':{'path':f'{DATASETS_PREFIX}GSE130491.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA1'
+                               },  
+                    'GSE144858':{'path':f'{DATASETS_PREFIX}GSE144858.pkl.gz',
+                               'conditions':['AD', 'MCI'],
+                               'test':'AA2'
+                               }, 
+                    'GSE151355':{'path':f'{DATASETS_PREFIX}GSE151355.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA1'
+                               }, 
+                    'GSE156994':{'path':f'{DATASETS_PREFIX}GSE156994.pkl.gz',
+                               'conditions':['CJD'],
+                               'test':'AA2'
+                               }, 
+                    'GSE219293':{'path':f'{DATASETS_PREFIX}GSE219293.pkl.gz',
+                               'conditions':['MS'],
+                               'test':'AA2'
+                               }, 
+}
+
+
+datasets_config_old = {
                     'GSE52588':{'path':f'{DATASETS_PREFIX}GSE52588.pkl.gz',
-                               'condition':'DS',
+                               'conditions':['DS'],
                                'test':'AA2'
                                },
                     'GSE42861':{'path':f'{DATASETS_PREFIX}GSE42861.pkl.gz',
-                               'condition':'RA',
+                               'conditions':['RA'],
+                               'test':'AA2'
+                               },
+                    'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz', 
+                               'conditions':['OBS', 'ASD'],
                                'test':'AA2'
                                },
                     'GSE59685':{'path':f'{DATASETS_PREFIX}GSE59685.pkl.gz',
-                               'condition':'AD',
+                               'conditions':['AD'],
                                'test':'AA2'
                                },
                     'GSE80970':{'path':f'{DATASETS_PREFIX}GSE80970.pkl.gz',
-                               'condition':'AD',
+                               'conditions':['AD'],
                                'test':'AA2'
                                },         
                     
                     #Immune system diseases
                     'GSE87640':{'path':f'{DATASETS_PREFIX}GSE87640.pkl.gz',
-                               'condition':'IBD',
+                               'conditions':['IBD'],
                                'test':'AA2'
                                },   
                     'GSE87648':{'path':f'{DATASETS_PREFIX}GSE87648.pkl.gz',
-                               'condition':'IBD',
+                               'conditions':['IBD'],
                                'test':'AA2'
                                },
                     'GSE32148':{'path':f'{DATASETS_PREFIX}GSE32148.pkl.gz',
-                               'condition':'IBD',
+                               'conditions':['IBD'],
                                'test':'AA2'
                                },    
                     'GSE53840':{'path':f'{DATASETS_PREFIX}GSE53840.pkl.gz',
-                               'condition':'HIV',
+                               'conditions':['HIV'],
                                'test':'AA1'
                                },   
                     
                     #Cardiovascular diseases                                         
                     'GSE157131':{'path':f'{DATASETS_PREFIX}GSE157131.pkl.gz',
-                               'condition':'HT',
+                               'conditions':['HT'],
                                'test':'AA2'
                                },  
                     'GSE84395':{'path':f'{DATASETS_PREFIX}GSE84395.pkl.gz',
-                               'condition':'PAH',
+                               'conditions':['PAH'],
                                'test':'AA2'
                                },
                     'GSE56046':{'path':f'{DATASETS_PREFIX}GSE56046.pkl.gz',
-                               'condition':'AS',
+                               'conditions':['AS'],
                                'test':'AA2'
                                },
                     'GSE56581':{'path':f'{DATASETS_PREFIX}GSE56581.pkl.gz',
-                               'condition':'AS',
+                               'conditions':['AS'],
                                'test':'AA2'
                                },
                     'GSE107143':{'path':f'{DATASETS_PREFIX}GSE107143.pkl.gz',
-                               'condition':'AS',
+                               'conditions':['AS'],
                                'test':'AA2'
                                },
                     'GSE62867':{'path':f'{DATASETS_PREFIX}GSE62867.pkl.gz',
-                               'condition':'IHD',
+                               'conditions':['IHD'],
                                'test':'AA1'
                                },
                     'GSE69138':{'path':f'{DATASETS_PREFIX}GSE69138.pkl.gz',
-                               'condition':'CVA',
+                               'conditions':['CVA'],
                                'test':'AA1'
                                },
                     'GSE203399':{'path':f'{DATASETS_PREFIX}GSE203399.pkl.gz',
-                               'condition':'CVA',
+                               'conditions':['CVA'],
                                'test':'AA1'
                                },
                     'GSE109096':{'path':f'{DATASETS_PREFIX}GSE109096.pkl.gz',
-                               'condition':'HF',
+                               'conditions':['HF'],
                                'test':'AA1'
                                },
                     'GSE197670':{'path':f'{DATASETS_PREFIX}GSE197670.pkl.gz',
-                               'condition':'HF',
+                               'conditions':['HF'],
                                'test':'AA1'
                                },
                     'GSE46394':{'path':f'{DATASETS_PREFIX}GSE46394.pkl.gz', #multiple points per human
-                               'condition':'AS',
+                               'conditions':['AS'],
                                'test':'AA2'
                                },                               
                     
                     #Metabolic disorders
                     'GSE38291':{'path':f'{DATASETS_PREFIX}GSE38291.pkl.gz',
-                               'condition':'T2D',
-                               'test':'AA2'
-                               },
-                    'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz', #TODO: process 2 conditions
-                               'condition':'OBS',
+                               'conditions':['T2D'],
                                'test':'AA2'
                                },
                     'GSE50498':{'path':f'{DATASETS_PREFIX}GSE50498.pkl.gz',
-                               'condition':'OBS',
+                               'conditions':'OBS',
                                'test':'AA2'
                                },      
                     'GSE73103':{'path':f'{DATASETS_PREFIX}GSE73103.pkl.gz',
-                               'condition':'OBS',
+                               'conditions':'OBS',
                                'test':'AA2'
                                },   
                     'GSE222595':{'path':f'{DATASETS_PREFIX}GSE222595.pkl.gz',
-                               'condition':'OBS',
+                               'conditions':'OBS',
                                'test':'AA2'
                                },
-                    'GSE48325':{'path':f'{DATASETS_PREFIX}GSE48325.pkl.gz', #TODO: process multiple conditions
-                               'condition':'OBS', 
+                    'GSE48325':{'path':f'{DATASETS_PREFIX}GSE48325.pkl.gz', 
+                               'conditions':'OBS', 
                                'test':'AA2'
                                },    
-                    'GSE61256':{'path':f'{DATASETS_PREFIX}GSE48325.pkl.gz', #TODO: process multiple conditions
-                               'condition':'OBS', 
+                    'GSE61256':{'path':f'{DATASETS_PREFIX}GSE48325.pkl.gz', 
+                               'conditions':'OBS', 
                                'test':'AA2'
                                },        
                     'GSE62003':{'path':f'{DATASETS_PREFIX}GSE62003.pkl.gz', 
-                               'condition':'T2D', 
+                               'conditions':'T2D', 
                                'test':'AA1'
                                },                   
                    }
@@ -122,7 +374,7 @@ datasets_config = {
 
 datasets_config_bench1 = {
                     'GSE3214':{'path':f'{DATASETS_PREFIX}GSE3214.pkl.gz',
-                               'condition':'IBD',
+                               'conditions':'IBD',
                                'test':'AA2'
                                },    
 
@@ -132,51 +384,47 @@ datasets_config_bench1 = {
 
 datasets_config_bench2 = {
                     'GSE32148':{'path':f'{DATASETS_PREFIX}GSE32148.pkl.gz',
-                               'condition':'IBD',
+                               'conditions':'IBD',
                                'test':'AA2'
                                },    
                     'GSE56581':{'path':f'{DATASETS_PREFIX}GSE56581.pkl.gz',
-                               'condition':'AS',
+                               'conditions':'AS',
                                'test':'AA2'
                                },
                     'GSE87640':{'path':f'{DATASETS_PREFIX}GSE87640.pkl.gz',
-                               'condition':'IBD',
+                               'conditions':'IBD',
                                'test':'AA2'
                                },   
                     'GSE67751':{'path':f'{DATASETS_PREFIX}GSE67751.pkl.gz',
-                               'condition':'HIV',
+                               'conditions':'HIV',
                                'test':'AA2'
                                }, 
                     'GSE131989':{'path':f'{DATASETS_PREFIX}GSE131989.pkl.gz',
-                               'condition':'RA',
+                               'conditions':'RA',
                                'test':'AA2'
                                },          
                     'GSE134429':{'path':f'{DATASETS_PREFIX}GSE134429.pkl.gz',
-                               'condition':'RA',
+                               'conditions':'RA',
                                'test':'AA2'
                                },       
-                    'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz',
-                               'condition':'OBS',
-                               'test':'AA2'
-                               },     
                     'GSE99624':{'path':f'{DATASETS_PREFIX}GSE99624.pkl.gz',
-                               'condition':'OP',
+                               'conditions':'OP',
                                'test':'AA2'
                                },  
                     # 'GSE100825':{'path':f'{DATASETS_PREFIX}GSE100825.pkl.gz',
-                    #            'condition':'WS',
+                    #            'conditions':'WS',
                     #            'test':'AA2'
                     #            },  #too few samples
                     'GSE131752':{'path':f'{DATASETS_PREFIX}GSE131752.pkl.gz',
-                               'condition':'WS',
+                               'conditions':'WS',
                                'test':'AA2'
                                },   
                     'GSE182991':{'path':f'{DATASETS_PREFIX}GSE182991.pkl.gz',
-                               'condition':'HGPS',
+                               'conditions':'HGPS',
                                'test':'AA2'
                                },    
                     'GSE214297':{'path':f'{DATASETS_PREFIX}GSE214297.pkl.gz',
-                               'condition':'CGL',
+                               'conditions':'CGL',
                                'test':'AA2'
                                },   
                    }

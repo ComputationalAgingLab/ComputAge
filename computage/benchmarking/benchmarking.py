@@ -11,6 +11,7 @@ class EpiClocksBenchmarking:
     def __init__(self, 
                  models_config: dict,
                  datasets_config: dict,
+                 tissue_types: str | list[str] = 'BSB',
                  experiment_prefix: str = 'test', 
                  test_age_prediction: bool = True,
                  correction_threshold: float = 0.05,
@@ -24,6 +25,8 @@ class EpiClocksBenchmarking:
         """
         self.models_config = models_config
         self.datasets_config = datasets_config
+        self.tissue_types = ['Blood', 'Saliva', 'Buccal'] if tissue_types=='BSB' else tissue_types
+        self.tissue_types = [self.tissue_types] if type(self.tissue_types) == str else self.tissue_types
         self.n_datasets = len(datasets_config)
         self.n_models = len(models_config['in_library']) + len(models_config['new_models'])
         self.low_memory = low_memory
@@ -51,6 +54,9 @@ class EpiClocksBenchmarking:
         pass
 
     def run(self) -> None:
+        """
+        Run epigenetic clocks benchmarking!
+        """
         #preparation
         self.check_folder(self.output_folder)
         self.check_existence()
@@ -66,8 +72,12 @@ class EpiClocksBenchmarking:
                               total=self.n_datasets,
                               desc='Datasets'):
             #import data
-            path, cond, test = conf.values()
+            path, conditions, test = conf.values()
             dnam, meta = pd.read_pickle(path, compression='gzip').values()
+            #initial tissue filtering
+            tissue_indices = meta[meta['Tissue'].isin(self.tissue_types)].index
+            meta = meta.loc[tissue_indices]
+            dnam = dnam.loc[tissue_indices]
             
             #################################
             ###Should be modified in future## 
@@ -98,22 +108,27 @@ class EpiClocksBenchmarking:
             #######################################
             #######################################
 
-            pred = pd.DataFrame(predictions)
-            self.datasets_predictions[gse] = pred.copy()
-            meta['GSE'] = gse
-            self.datasets_metadata[gse] = meta.copy()
-            #meta filtering
-            no_age_na_indices = meta[~meta['Age'].isna()].index
-            meta = meta.loc[no_age_na_indices]
+            for cond in conditions:
+                pred = pd.DataFrame(predictions)
+                self.datasets_predictions[gse] = pred.copy()
+                meta['GSE'] = gse
+                self.datasets_metadata[gse] = meta.copy()
+                #meta filtering
+                no_age_na_indices = meta[~meta['Age'].isna()].index
+                meta = meta.loc[no_age_na_indices]
 
-            if test == 'AA2':
-                pvals = self.AA2_test(pred, meta, gse, cond)
-                self.bench_results_AA2[f'{cond}:{gse}:AA2'] = pd.Series(pvals)
-            elif test == 'AA1': 
-                pvals = self.AA1_test(pred, meta, gse, cond)
-                self.bench_results_AA1[f'{cond}:{gse}:AA1'] = pd.Series(pvals)
-            else:
-                NotImplementedError("Following tests are currently available: ['AA2', 'AA1'].")
+                if test == 'AA2':
+                    pvals = self.AA2_test(pred, meta, gse, cond)
+                    if pvals is None:
+                        continue
+                    self.bench_results_AA2[f'{gse}:{cond}:AA2'] = pd.Series(pvals)
+                elif test == 'AA1': 
+                    pvals = self.AA1_test(pred, meta, gse, cond)
+                    if pvals is None:
+                        continue
+                    self.bench_results_AA1[f'{gse}:{cond}:AA1'] = pd.Series(pvals)
+                else:
+                    NotImplementedError("Following tests are currently available: ['AA2', 'AA1'].")
             
         
         #multiple testing correction of results. Note each model's pvalues are corrected individually.
@@ -152,8 +167,11 @@ class EpiClocksBenchmarking:
         #calculating mann-whitney test for difference in age acceleration between disease and healthy cohorts
         disease_idx = meta.index[meta['Condition'] == cond]
         healthy_idx = meta.index[meta['Condition'] == 'HC']
+        if (len(disease_idx) == 0) or (len(healthy_idx) == 0):
+            print(f'{gse}:{cond} - {len(disease_idx)} disease and {len(healthy_idx)} healthy samples found - AA2 test is impossible. Skip!')
+            return None
         if self.verbose > 0:
-            print(f'{cond}:{gse} - AA2 testing {len(disease_idx)} disease versus {len(healthy_idx)} healthy samples')
+            print(f'{gse}:{cond} - AA2 testing {len(disease_idx)} disease versus {len(healthy_idx)} healthy samples')
         pvals = {}
         for col in pred.columns:
             disease_true = meta.loc[disease_idx, 'Age'].values
@@ -170,7 +188,7 @@ class EpiClocksBenchmarking:
         #calculating wilcoxon test for positive age (>0) acceleration in disease cohort
         disease_idx = meta.index[meta['Condition'] == cond]
         if self.verbose > 0:
-            print(f'{cond}:{gse} - AA1 testing {len(disease_idx)} disease samples')
+            print(f'{gse}:{cond} - AA1 testing {len(disease_idx)} disease samples')
         pvals = {}
         for col in pred.columns:
             disease_true = meta.loc[disease_idx, 'Age'].values
