@@ -6,12 +6,15 @@ from tqdm import tqdm
 import pickle
 from scipy.stats import mannwhitneyu, wilcoxon
 from statsmodels.stats.multitest import multipletests
+from computage.utils.data_utils import cond2class
 
 class EpiClocksBenchmarking:
     def __init__(self, 
                  models_config: dict,
                  datasets_config: dict,
                  tissue_types: str | list[str] = 'BSB',
+                 age_limits: list | None = [18, 90],
+                 age_limits_class_exclusions: list[str] | None = ['PGS'],
                  experiment_prefix: str = 'test', 
                  test_age_prediction: bool = True,
                  correction_threshold: float = 0.05,
@@ -27,6 +30,8 @@ class EpiClocksBenchmarking:
         self.datasets_config = datasets_config
         self.tissue_types = ['Blood', 'Saliva', 'Buccal'] if tissue_types=='BSB' else tissue_types
         self.tissue_types = [self.tissue_types] if type(self.tissue_types) == str else self.tissue_types
+        self.age_limits = age_limits
+        self.age_limits_class_exclusions = age_limits_class_exclusions
         self.n_datasets = len(datasets_config)
         self.n_models = len(models_config['in_library']) + len(models_config['new_models'])
         self.low_memory = low_memory
@@ -74,7 +79,9 @@ class EpiClocksBenchmarking:
             #import data
             path, conditions, test = conf.values()
             dnam, meta = pd.read_pickle(path, compression='gzip').values()
+            meta['GSE'] = gse
             #initial tissue filtering
+            meta['Age'] = meta['Age'].astype(float)
             tissue_indices = meta[meta['Tissue'].isin(self.tissue_types)].index
             meta = meta.loc[tissue_indices]
             dnam = dnam.loc[tissue_indices]
@@ -107,23 +114,28 @@ class EpiClocksBenchmarking:
 
             #######################################
             #######################################
-
+            pred = pd.DataFrame(predictions)
+            self.datasets_predictions[gse] = pred.copy()
+            self.datasets_metadata[gse] = meta.copy()
+            #meta filtering
+            no_na_indices = meta[~meta['Age'].isna()].index
+            meta = meta.loc[no_na_indices]
+            meta['Age'] = meta['Age'].astype(float) #TODO: add function checking this behaviour
+            
             for cond in conditions:
-                pred = pd.DataFrame(predictions)
-                self.datasets_predictions[gse] = pred.copy()
-                meta['GSE'] = gse
-                self.datasets_metadata[gse] = meta.copy()
-                #meta filtering
-                no_age_na_indices = meta[~meta['Age'].isna()].index
-                meta = meta.loc[no_age_na_indices]
-
+                cl = cond2class([cond])[0]
+                if cl not in self.age_limits_class_exclusions:
+                    meta_ = meta[(self.age_limits[0] <= meta['Age']) & 
+                                 (meta['Age'] <= self.age_limits[1])].copy()
+                else:
+                    meta_ = meta.copy()
                 if test == 'AA2':
-                    pvals = self.AA2_test(pred, meta, gse, cond)
+                    pvals = self.AA2_test(pred, meta_, gse, cond)
                     if pvals is None:
                         continue
                     self.bench_results_AA2[f'{gse}:{cond}:AA2'] = pd.Series(pvals)
                 elif test == 'AA1': 
-                    pvals = self.AA1_test(pred, meta, gse, cond)
+                    pvals = self.AA1_test(pred, meta_, gse, cond)
                     if pvals is None:
                         continue
                     self.bench_results_AA1[f'{gse}:{cond}:AA1'] = pd.Series(pvals)
@@ -157,6 +169,13 @@ class EpiClocksBenchmarking:
         from biolearn.data_library import GeoData
         from biolearn.model_gallery import ModelGallery
         gallery = ModelGallery()
+        ###TMP###
+        # if 'Gender' not in meta.columns:
+        #     meta['Gender'] = np.nan
+        # meta = meta.rename(columns={'Age':'age', 'Gender':'sex'})
+        # meta['age'] = meta['age'].astype(float)
+        # meta['sex'] = meta['sex'].map({'M':2, 'F':1})
+        #########
         data = GeoData(meta, dnam.T) 
         #published clocks prediction
         results = gallery.get(model_key, 
@@ -187,6 +206,9 @@ class EpiClocksBenchmarking:
     def AA1_test(self, pred, meta, gse, cond):
         #calculating wilcoxon test for positive age (>0) acceleration in disease cohort
         disease_idx = meta.index[meta['Condition'] == cond]
+        if (len(disease_idx) == 0):
+            print(f'{gse}:{cond} - {len(disease_idx)} disease samples found - AA1 test is impossible. Skip!')
+            return None
         if self.verbose > 0:
             print(f'{gse}:{cond} - AA1 testing {len(disease_idx)} disease samples')
         pvals = {}
@@ -200,6 +222,7 @@ class EpiClocksBenchmarking:
 
     def CA_prediction_test(self) -> pd.DataFrame:
         full_meta = pd.concat(self.datasets_metadata.values(), axis=0)
+        full_meta['Age'] = full_meta['Age'].astype(float)
         full_pred = pd.concat(self.datasets_predictions.values(), axis=0)
         hc_index = full_meta[~full_meta['Age'].isna() & (full_meta['Condition'] == 'HC')].index
         hc_age = full_meta.loc[hc_index]['Age']

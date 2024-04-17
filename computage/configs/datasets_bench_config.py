@@ -26,7 +26,7 @@ datasets_config_main = {
                                },
                     'GSE203399':{'path':f'{DATASETS_PREFIX}GSE203399.pkl.gz',
                                'conditions':['CVA'],
-                               'test':'AA2'
+                               'test':'AA1'
                                },
                     #ISD
                     'GSE32148':{'path':f'{DATASETS_PREFIX}GSE32148.pkl.gz',
@@ -135,7 +135,7 @@ datasets_config_main = {
                                'test':'AA1'
                                },   
                     'GSE175364':{'path':f'{DATASETS_PREFIX}GSE175364.pkl.gz',
-                               'conditions':['OA', 'RA'],
+                               'conditions':['RA'],
                                'test':'AA2'
                                },
                     'GSE176168':{'path':f'{DATASETS_PREFIX}GSE176168.pkl.gz',
@@ -148,7 +148,7 @@ datasets_config_main = {
                                },        
                     #MBD
                     'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz',
-                               'conditions':['OBS', 'ASD'],
+                               'conditions':['OBS'],
                                'test':'AA2'
                                },     
                     'GSE56606':{'path':f'{DATASETS_PREFIX}GSE56606.pkl.gz',
@@ -184,7 +184,7 @@ datasets_config_main = {
                     #NDD                                                                                    
                     'GSE43976':{'path':f'{DATASETS_PREFIX}GSE43976.pkl.gz',
                                'conditions':['MS'],
-                               'test':'AA2'
+                               'test':'AA1'
                                },    
                     'GSE59685':{'path':f'{DATASETS_PREFIX}GSE59685.pkl.gz',
                                'conditions':['AD'],
@@ -195,10 +195,6 @@ datasets_config_main = {
                                'test':'AA2'
                                },  
                     'GSE72776':{'path':f'{DATASETS_PREFIX}GSE72776.pkl.gz',
-                               'conditions':['PD'],
-                               'test':'AA2'
-                               },  
-                    'GSE78874':{'path':f'{DATASETS_PREFIX}GSE78874.pkl.gz',
                                'conditions':['PD'],
                                'test':'AA2'
                                },  
@@ -250,126 +246,11 @@ datasets_config_main = {
                                'conditions':['MS'],
                                'test':'AA2'
                                }, 
+                    'GSE122244':{'path':f'{DATASETS_PREFIX}GSE122244.pkl.gz',
+                               'conditions':['PD'],
+                               'test':'AA2'
+                               }, 
 }
-
-
-datasets_config_old = {
-                    'GSE52588':{'path':f'{DATASETS_PREFIX}GSE52588.pkl.gz',
-                               'conditions':['DS'],
-                               'test':'AA2'
-                               },
-                    'GSE42861':{'path':f'{DATASETS_PREFIX}GSE42861.pkl.gz',
-                               'conditions':['RA'],
-                               'test':'AA2'
-                               },
-                    'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz', 
-                               'conditions':['OBS', 'ASD'],
-                               'test':'AA2'
-                               },
-                    'GSE59685':{'path':f'{DATASETS_PREFIX}GSE59685.pkl.gz',
-                               'conditions':['AD'],
-                               'test':'AA2'
-                               },
-                    'GSE80970':{'path':f'{DATASETS_PREFIX}GSE80970.pkl.gz',
-                               'conditions':['AD'],
-                               'test':'AA2'
-                               },         
-                    
-                    #Immune system diseases
-                    'GSE87640':{'path':f'{DATASETS_PREFIX}GSE87640.pkl.gz',
-                               'conditions':['IBD'],
-                               'test':'AA2'
-                               },   
-                    'GSE87648':{'path':f'{DATASETS_PREFIX}GSE87648.pkl.gz',
-                               'conditions':['IBD'],
-                               'test':'AA2'
-                               },
-                    'GSE32148':{'path':f'{DATASETS_PREFIX}GSE32148.pkl.gz',
-                               'conditions':['IBD'],
-                               'test':'AA2'
-                               },    
-                    'GSE53840':{'path':f'{DATASETS_PREFIX}GSE53840.pkl.gz',
-                               'conditions':['HIV'],
-                               'test':'AA1'
-                               },   
-                    
-                    #Cardiovascular diseases                                         
-                    'GSE157131':{'path':f'{DATASETS_PREFIX}GSE157131.pkl.gz',
-                               'conditions':['HT'],
-                               'test':'AA2'
-                               },  
-                    'GSE84395':{'path':f'{DATASETS_PREFIX}GSE84395.pkl.gz',
-                               'conditions':['PAH'],
-                               'test':'AA2'
-                               },
-                    'GSE56046':{'path':f'{DATASETS_PREFIX}GSE56046.pkl.gz',
-                               'conditions':['AS'],
-                               'test':'AA2'
-                               },
-                    'GSE56581':{'path':f'{DATASETS_PREFIX}GSE56581.pkl.gz',
-                               'conditions':['AS'],
-                               'test':'AA2'
-                               },
-                    'GSE107143':{'path':f'{DATASETS_PREFIX}GSE107143.pkl.gz',
-                               'conditions':['AS'],
-                               'test':'AA2'
-                               },
-                    'GSE62867':{'path':f'{DATASETS_PREFIX}GSE62867.pkl.gz',
-                               'conditions':['IHD'],
-                               'test':'AA1'
-                               },
-                    'GSE69138':{'path':f'{DATASETS_PREFIX}GSE69138.pkl.gz',
-                               'conditions':['CVA'],
-                               'test':'AA1'
-                               },
-                    'GSE203399':{'path':f'{DATASETS_PREFIX}GSE203399.pkl.gz',
-                               'conditions':['CVA'],
-                               'test':'AA1'
-                               },
-                    'GSE109096':{'path':f'{DATASETS_PREFIX}GSE109096.pkl.gz',
-                               'conditions':['HF'],
-                               'test':'AA1'
-                               },
-                    'GSE197670':{'path':f'{DATASETS_PREFIX}GSE197670.pkl.gz',
-                               'conditions':['HF'],
-                               'test':'AA1'
-                               },
-                    'GSE46394':{'path':f'{DATASETS_PREFIX}GSE46394.pkl.gz', #multiple points per human
-                               'conditions':['AS'],
-                               'test':'AA2'
-                               },                               
-                    
-                    #Metabolic disorders
-                    'GSE38291':{'path':f'{DATASETS_PREFIX}GSE38291.pkl.gz',
-                               'conditions':['T2D'],
-                               'test':'AA2'
-                               },
-                    'GSE50498':{'path':f'{DATASETS_PREFIX}GSE50498.pkl.gz',
-                               'conditions':'OBS',
-                               'test':'AA2'
-                               },      
-                    'GSE73103':{'path':f'{DATASETS_PREFIX}GSE73103.pkl.gz',
-                               'conditions':'OBS',
-                               'test':'AA2'
-                               },   
-                    'GSE222595':{'path':f'{DATASETS_PREFIX}GSE222595.pkl.gz',
-                               'conditions':'OBS',
-                               'test':'AA2'
-                               },
-                    'GSE48325':{'path':f'{DATASETS_PREFIX}GSE48325.pkl.gz', 
-                               'conditions':'OBS', 
-                               'test':'AA2'
-                               },    
-                    'GSE61256':{'path':f'{DATASETS_PREFIX}GSE48325.pkl.gz', 
-                               'conditions':'OBS', 
-                               'test':'AA2'
-                               },        
-                    'GSE62003':{'path':f'{DATASETS_PREFIX}GSE62003.pkl.gz', 
-                               'conditions':'T2D', 
-                               'test':'AA1'
-                               },                   
-                   }
-
 
 
 datasets_config_bench1 = {

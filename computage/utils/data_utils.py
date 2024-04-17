@@ -21,7 +21,11 @@ def test_dataset(path: str, compression: str = 'gzip') -> None:
     """
     data, meta = pd.read_pickle(f'{path}', compression=compression).values()
     assert all(data.dtypes == np.float32), 'Type of dataframe entries is not float32!'
+    assert ~((data > 1) | (data < 0)).any().any(), 'Data contain beta-values beyond [0, 1] interval'
     assert all(data.index == meta.index), 'Indices of data and meta are not equal!'
+    # assert not any(meta['Age'] > 130), 'Dataset contains samples with age older than 130 years. Possibly, wrong units of age.'
+    for c in ['Title', 'Tissue', 'Age', 'Condition']:
+        assert c in meta.columns, f'Metadata does not contain {c} column'
     print('Ok!')
 
 
@@ -46,3 +50,25 @@ def download_dataset(meta_table, dataset_name, save_dir):
     public_key = meta_table['Link'].iloc[dataset_idx]
     download_from_storage(public_key, os.path.join(save_dir, dataset_name + '.pkl.gz'))
     print(f'Dataset {dataset_name} saved to {save_dir}')
+
+
+def cond2class(conds: list) -> list:
+    """
+        Converts condition abbreviations to correspodning class abbreviations.
+    """
+    classcond = {
+        "NDD": ['AD', 'PD', 'MS', 'DLB', 'CJD', 'MCI'],
+        "CVD": ['HTN','AS','IHD','CVA','HF',],
+        "ISD": ['CD','UC','IBD','IBS','SLE','HIV', 'HIV_TB', 'TB'],
+        "MSD": ['SP','OP','OA','RA',],
+        "MBD": ['OBS','IR','T1D','T2D','MBS', 'ASD'],
+        "LVD": ['NAFLD','NASH','PBC','PSC','LF','HCC',],
+        "LUD": ['COPD', 'IPF'],
+        "PGS": ['WS', 'HGPS', 'CGL', 'DS', 'aWS', 'MDPS', 'ncLMNA']
+    }
+    classes = []
+    for c in conds:
+        for cl, l in classcond.items():
+            if c in l:
+                classes.append(cl)
+    return classes
