@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import pickle
-from scipy.stats import mannwhitneyu, wilcoxon
+from scipy.stats import mannwhitneyu, wilcoxon, ttest_1samp, ttest_ind
 from statsmodels.stats.multitest import multipletests
 from computage.utils.data_utils import cond2class
 
@@ -15,8 +15,8 @@ class EpiClocksBenchmarking:
                  tissue_types: str | list[str] = 'BSB',
                  age_limits: list | None = [18, 90],
                  age_limits_class_exclusions: list[str] | None = ['PGS'],
-                 experiment_prefix: str = 'test', 
-                 test_age_prediction: bool = True,
+                 experiment_prefix: str = 'test',
+                 delta_assumption: str = 'normal',
                  correction_threshold: float = 0.05,
                  save_results: bool = True,
                  output_folder: str ='./bench_results', 
@@ -38,7 +38,7 @@ class EpiClocksBenchmarking:
         self.save_results = save_results
         self.output_folder = output_folder
         self.experiment_prefix = experiment_prefix
-        self.test_age_prediction = test_age_prediction
+        self.delta_assumption = delta_assumption
         self.correction_threshold = correction_threshold
         self.verbose = verbose
         print(f'{self.n_models} models will be tested on {self.n_datasets} datasets.')
@@ -150,9 +150,10 @@ class EpiClocksBenchmarking:
         self.corrected_results = pd.concat([corrected_results_AA2, corrected_results_AA1], axis=1)
         self.corrected_results_bool = self.corrected_results < self.correction_threshold
 
-        #optional test of chronological age prediction accuracy
-        if self.test_age_prediction:
-            self.CA_prediction_results = self.CA_prediction_test()
+        #additional test of chronological age prediction accuracy
+        #and age acceleration prediction bias
+        self.CA_prediction_results = self.CA_prediction_test()
+        self.CA_bias_results = self.CA_bias_test()
 
         if self.save_results:
             self.bench_results.to_csv(os.path.join(self.output_folder, 
@@ -163,6 +164,8 @@ class EpiClocksBenchmarking:
                                                        f'{self.experiment_prefix}_bench_bools.csv'))
             self.CA_prediction_results.to_csv(os.path.join(self.output_folder, 
                                                        f'{self.experiment_prefix}_bench_CA_pred_MAE.csv'))
+            self.CA_bias_results.to_csv(os.path.join(self.output_folder, 
+                                                       f'{self.experiment_prefix}_bench_CA_pred_bias.csv'))
             
 
     def biolearn_predict(self, dnam, meta, model_key, imputation_method='none'):
@@ -199,7 +202,12 @@ class EpiClocksBenchmarking:
             healthy_pred = pred.loc[healthy_idx, col].values
             disease_delta = disease_pred - disease_true
             healthy_delta = healthy_pred - healthy_true
-            _, pval = mannwhitneyu(disease_delta, healthy_delta, alternative='greater')
+            if self.delta_assumption == 'normal':
+                _, pval = ttest_ind(disease_delta, healthy_delta, equal_var=False, alternative='greater')
+            elif self.delta_assumption == 'none':
+                _, pval = mannwhitneyu(disease_delta, healthy_delta, alternative='greater')
+            else:
+                raise NotImplementedError()
             pvals[col] = pval
         return pvals
 
@@ -216,10 +224,15 @@ class EpiClocksBenchmarking:
             disease_true = meta.loc[disease_idx, 'Age'].values
             disease_pred = pred.loc[disease_idx, col].values
             disease_delta = disease_pred - disease_true
-            _, pval = wilcoxon(disease_delta, alternative='greater')
+            if self.delta_assumption == 'normal':
+                _, pval = ttest_1samp(disease_delta, popmean=0., alternative='greater')
+            elif self.delta_assumption == 'none':
+                _, pval = wilcoxon(disease_delta, alternative='greater')
+            else:
+                raise NotImplementedError()
             pvals[col] = pval
         return pvals    
-
+    
     def CA_prediction_test(self) -> pd.DataFrame:
         full_meta = pd.concat(self.datasets_metadata.values(), axis=0)
         full_meta['Age'] = full_meta['Age'].astype(float)
@@ -229,10 +242,23 @@ class EpiClocksBenchmarking:
         hc_pred = full_pred.loc[hc_index]
         absdiff = np.abs(hc_pred.subtract(hc_age.values, axis=0))
         if self.verbose > 0:
-            print(f'Compute MAE metric based on {absdiff.shape[0]} healthy control samples.')
-        result = pd.concat([absdiff.mean(axis=0), absdiff.sem(axis=0, ddof=1)], 
-                            keys=['MAE', 'MAE_SE'], axis=1).reset_index()
+            print(f'Compute MedAE metric based on {absdiff.shape[0]} healthy control samples.')
+        result = pd.concat([absdiff.median(axis=0)], 
+                            keys=['MAE'], axis=1).reset_index()
         result = result.sort_values('MAE')
+        return result    
+    
+    def CA_bias_test(self) -> pd.DataFrame:
+        full_meta = pd.concat(self.datasets_metadata.values(), axis=0)
+        full_meta['Age'] = full_meta['Age'].astype(float)
+        full_pred = pd.concat(self.datasets_predictions.values(), axis=0)
+        hc_index = full_meta[~full_meta['Age'].isna() & (full_meta['Condition'] == 'HC')].index
+        hc_age = full_meta.loc[hc_index]['Age']
+        hc_pred = full_pred.loc[hc_index]
+        diff = hc_pred.subtract(hc_age.values, axis=0)
+        result = pd.concat([diff.median(axis=0)], keys=['MedE'], axis=1).reset_index()
+        result['absMedE'] = np.abs(result['MedE'])
+        result = result.sort_values('absMedE', ascending=True)
         return result
     
     @staticmethod

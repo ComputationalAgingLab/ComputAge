@@ -113,27 +113,63 @@ def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
     return ax
 
 
-def plot_mae(result, figsize=(5.5, 3)):
+def plot_medae(result, figsize=(5.5, 3)):
     """
         Docstring
     """
     fig, axes = plt.subplots(1, 1, figsize=figsize)
     color_iters = sns.color_palette('muted') 
 
-    z = norm.ppf(0.95) #95% CI
-    result['CI'] = result['MAE_SE'] * z
-    result['CI']
-
     axes.grid(alpha=0.3, zorder=0)
     sns.barplot(data=result, x='index', y='MAE', orient='v', ax=axes, palette=color_iters, zorder=100, )
-    axes.errorbar(data=result, x='index', y='MAE', yerr='CI', 
-                ls='', lw=1.5, color='black', zorder=200)
     axes.set_xlabel('')
-    axes.set_ylabel(f'Mean Absolute Error, years')
+    axes.set_ylabel(f'Median Absolute Error, years')
     axes.set_title('Chronological age prediction accuracy')
     ytickmax = round(result['MAE'].max())
     axes.set_yticks(range(0, ytickmax + 5, 5))
     axes.set_xticklabels(axes.get_xticklabels(), rotation=45, ha='right')
     axes.set_ylim([0, ytickmax + 3])
 
+
+    for p in axes.patches:
+        h = p.get_height() 
+        step = 1 if h > 0 else -1
+        axes.annotate("%.1f" % p.get_height(), 
+                        xy=(p.get_x()+0.37, h + step),
+                        xytext=(0, 0), 
+                        textcoords='offset points', 
+                        ha="center", 
+                        va="center", 
+                        zorder=100,
+                        fontweight='bold',
+                        fontsize=8)
+
+    return axes
+
+
+def plot_bias(result, figsize=(5.5, 3)):
+    fig, axes = plt.subplots(1, 1, figsize=(6, 3))
+    color_iters = sns.color_palette('muted') 
+
+    axes.grid(alpha=0.3, zorder=0)
+    sns.barplot(data=result, x='index', y='MedE', orient='v', ax=axes, palette=color_iters, zorder=100, )
+    axes.set_xlabel('')
+    axes.set_ylabel(f'Median Error, years')
+    axes.set_title('Chronological age prediction bias')
+    axes.set_xticklabels(axes.get_xticklabels(), rotation=45, ha='right');
+    axes.set_ylim([-20, 20]);
+
+    for p in axes.patches:
+        h = 17 if p.get_height() > 17 else p.get_height()
+        h = -17 if p.get_height() < -17 else h
+        step = 1 if h > 0 else -1
+        axes.annotate("%.1f" % p.get_height(), 
+                        xy=(p.get_x()+0.37, h + step),
+                        xytext=(0, 0), 
+                        textcoords='offset points', 
+                        ha="center", 
+                        va="center", 
+                        zorder=100,
+                        fontweight='bold',
+                        fontsize=8)
     return axes
