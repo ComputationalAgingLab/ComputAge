@@ -7,7 +7,7 @@ import sys
 
 
 #from util import get_model_file
-scripts_working_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+scripts_working_directory = os.path.dirname(os.path.abspath(__file__))
 models_path = os.path.join(scripts_working_directory,'../models_library/raw_models/')
 model_files = os.listdir(models_path)
 model_mames = list(map(lambda a: a.replace('.csv','').lower(), model_files))
@@ -89,11 +89,11 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
     def __init__(
         self, name = 'phenoage', transform=None, preprocess=None) -> None:
         self.transform = transform
-        self.name - name
+        self.name = name
         self.model_file_path = os.path.join(models_path,dict_model_names_paths[self.name])
         self.model_data = pd.read_csv(self.model_file_path)
-        self.features = self.model_data[['Feature_ID']]
-        self.coefficients = np.array(self.model_data[['Coef']])
+        self.features = self.model_data[['Feature_ID']][1:]
+        self.coefficients = np.array(self.model_data[['Coef']][1:])
         self.preprocess = preprocess
 
     def fit(self,X,y):
@@ -106,9 +106,10 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         """
         samples = list(X.columns)[1:]    
         X[samples] = X[samples].apply(pd.to_numeric)
-        X_merged = X.merge(self.model_data, left_on='ID_REF', right_on='Feature_ID', how='right')
+        X_merged = X.merge(self.model_data.iloc[1:], left_on='ID_REF', right_on='Feature_ID', how='right')
         vectors = np.array(X_merged[samples].to_numpy())
         prediction = np.matmul( self.coefficients.transpose(), vectors)
+        prediction += self.model_data.iloc[0,1]
         pd_prediction = pd.DataFrame()
         pd_prediction['sample'] = samples
         pd_prediction['prediction'] = prediction.transpose()
