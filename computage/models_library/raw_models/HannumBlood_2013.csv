@@ -1,4 +1,5 @@
 Feature_ID,Coef,Coord_hg19
+Intercept,0,
 cg20822990,-15.7,Chr1_17338766
 cg22512670,1.05,Chr1_26855765
 cg25410668,3.87,Chr1_28241577
