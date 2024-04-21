@@ -87,9 +87,10 @@ class DeAgeBaseEstimator(PublishedClocksBaseEstimator, ABC):
     
 class LinearMethylationModel(PublishedClocksBaseEstimator):
     def __init__(
-        self, model_file_path, transform=None, preprocess=None) -> None:
+        self, name = 'phenoage', transform=None, preprocess=None) -> None:
         self.transform = transform
-        self.model_file_path = model_file_path
+        self.name - name
+        self.model_file_path = os.path.join(models_path,dict_model_names_paths[self.name])
         self.model_data = pd.read_csv(self.model_file_path)
         self.features = self.model_data[['Feature_ID']]
         self.coefficients = np.array(self.model_data[['Coef']])
