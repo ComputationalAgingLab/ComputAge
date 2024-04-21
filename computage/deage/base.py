@@ -2,7 +2,34 @@ from abc import ABC, abstractmethod
 from sklearn.base import BaseEstimator
 import numpy as np
 import pandas as pd
+import os
+import sys
+
+
 #from util import get_model_file
+scripts_working_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+models_path = os.path.join(scripts_working_directory,'../models_library/raw_models/')
+model_files = os.listdir(models_path)
+model_mames = list(map(lambda a: a.replace('.csv','').lower(), model_files))
+
+dict_model_names_paths = dict([(key, value)
+          for i, (key, value) in enumerate(zip(model_mames, model_files))])
+'''
+{'epitoc2': 'EpiTOC2.csv', 'dunedinpoam': 'DunedinPoAm.csv', 
+'mccartneyblood_2018_alcohol': 'McCartneyBlood_2018_Alcohol.csv', 
+'mccartneyblood_2018_education': 'McCartneyBlood_2018_Education.csv', 
+'linblood99cpg_2016': 'LinBlood99CpG_2016.csv', 'linblood3cpg_2016': 'LinBlood3CpG_2016.csv', 
+'hannumlung_2013': 'HannumLung_2013.csv', 
+'horvathmultishrunken_2013': 'HorvathMultiShrunken_2013.csv', 'hannumblood_2013': 'HannumBlood_2013.csv', 
+'horvathmulti_2013': 'HorvathMulti_2013.csv', 'mccartneyblood_2018_bmi': 'McCartneyBlood_2018_BMI.csv', 
+'mccartneyblood_2018_hdl': 'McCartneyBlood_2018_HDL.csv', 'mccartneyblood_2018_ldl': 'McCartneyBlood_2018_LDL.csv', 
+'hannumbreast_2013': 'HannumBreast_2013.csv', 'knightblood_2016': 'KnightBlood_2016.csv', 'yingdamage': 'YingDamAge.csv', 
+'mccartneyblood_2018_waisttipratio': 'McCartneyBlood_2018_WaistTipRatio.csv', 'hannumkidney_2013': 'HannumKidney_2013.csv',
+ 'mccartneyblood_2018_totalfat': 'McCartneyBlood_2018_TotalFat.csv', 'yingcausage': 'YingCausAge.csv', 
+ 'mccartneyblood_2018_tc': 'McCartneyBlood_2018_TC.csv', 'mccartneyblood_2018_smoking': 'McCartneyBlood_2018_Smoking.csv', 
+ 'yingadaptage': 'YingAdaptAge.csv', 'phenoage': 'PhenoAge.csv'}
+'''
+
 
 class PublishedClocksBaseEstimator(BaseEstimator, ABC):
     """
