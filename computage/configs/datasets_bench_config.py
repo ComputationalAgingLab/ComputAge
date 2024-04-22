@@ -148,7 +148,7 @@ datasets_config_main = {
                                },        
                     #MBD
                     'GSE49909':{'path':f'{DATASETS_PREFIX}GSE49909.pkl.gz',
-                               'conditions':['OBS'],
+                               'conditions':['XOB'],
                                'test':'AA2'
                                },     
                     'GSE56606':{'path':f'{DATASETS_PREFIX}GSE56606.pkl.gz',
@@ -159,8 +159,12 @@ datasets_config_main = {
                                'conditions':['T2D'],
                                'test':'AA1'
                                },     
-                    'GSE73103':{'path':f'{DATASETS_PREFIX}GSE73103.pkl.gz',
-                               'conditions':['OBS'],
+                    'GSE193836':{'path':f'{DATASETS_PREFIX}GSE193836.pkl.gz',
+                               'conditions':['XOB'],
+                               'test':'AA2'
+                               }, 
+                    'GSE166611':{'path':f'{DATASETS_PREFIX}GSE166611.pkl.gz',
+                               'conditions':['XOB'],
                                'test':'AA2'
                                }, 
                     #LUD
@@ -170,11 +174,11 @@ datasets_config_main = {
                                },       
                     #PGS       
                     'GSE131752':{'path':f'{DATASETS_PREFIX}GSE131752.pkl.gz',
-                               'conditions':['WS', 'aWS', 'MDPS'],
+                               'conditions':['WS'],
                                'test':'AA2'
                                },      
                     'GSE182991':{'path':f'{DATASETS_PREFIX}GSE182991.pkl.gz',
-                               'conditions':['HGPS', 'ncLMNA'],
+                               'conditions':['HGPS'],
                                'test':'AA2'
                                },    
                     'GSE214297':{'path':f'{DATASETS_PREFIX}GSE214297.pkl.gz',
@@ -199,7 +203,7 @@ datasets_config_main = {
                                'test':'AA2'
                                },  
                     'GSE103929':{'path':f'{DATASETS_PREFIX}GSE103929.pkl.gz',
-                               'conditions':['MS', 'OBS'],
+                               'conditions':['MS'],
                                'test':'AA1'
                                },  
                     'GSE106648':{'path':f'{DATASETS_PREFIX}GSE106648.pkl.gz',

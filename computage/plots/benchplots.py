@@ -113,7 +113,7 @@ def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
     return ax
 
 
-def plot_medae(result, figsize=(5.5, 3)):
+def plot_medae(result, figsize=(5.5, 3), upper_bound=18):
     """
         Docstring
     """
@@ -129,7 +129,7 @@ def plot_medae(result, figsize=(5.5, 3)):
     axes.set_yticks(range(0, ytickmax + 5, 5))
     axes.set_xticklabels(axes.get_xticklabels(), rotation=45, ha='right')
     axes.set_ylim([0, ytickmax + 3])
-
+    axes.axhline(upper_bound, color='grey', ls='--', alpha=0.5)
 
     for p in axes.patches:
         h = p.get_height() 
@@ -147,8 +147,8 @@ def plot_medae(result, figsize=(5.5, 3)):
     return axes
 
 
-def plot_bias(result, figsize=(5.5, 3)):
-    fig, axes = plt.subplots(1, 1, figsize=(6, 3))
+def plot_bias(result, figsize=(5.5, 3), ylims=[-20, 20]):
+    fig, axes = plt.subplots(1, 1, figsize=figsize)
     color_iters = sns.color_palette('muted') 
 
     axes.grid(alpha=0.3, zorder=0)
@@ -157,7 +157,8 @@ def plot_bias(result, figsize=(5.5, 3)):
     axes.set_ylabel(f'Median Error, years')
     axes.set_title('Chronological age prediction bias')
     axes.set_xticklabels(axes.get_xticklabels(), rotation=45, ha='right');
-    axes.set_ylim([-20, 20]);
+    axes.set_ylim(ylims);
+    axes.axhline(0, color='grey', ls='--', alpha=0.5)
 
     for p in axes.patches:
         h = 17 if p.get_height() > 17 else p.get_height()

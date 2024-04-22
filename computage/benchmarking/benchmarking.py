@@ -69,6 +69,8 @@ class EpiClocksBenchmarking:
         #go!
         self.bench_results_AA2 = pd.DataFrame()
         self.bench_results_AA1 = pd.DataFrame()
+        self.bench_deltas_AA2 = pd.DataFrame()
+        self.bench_deltas_AA1 = pd.DataFrame()
         self.datasets_predictions = {}
         self.datasets_metadata = {}
 
@@ -130,15 +132,21 @@ class EpiClocksBenchmarking:
                 else:
                     meta_ = meta.copy()
                 if test == 'AA2':
-                    pvals = self.AA2_test(pred, meta_, gse, cond)
+                    pvals, deltas = self.AA2_test(pred, meta_, gse, cond)
                     if pvals is None:
                         continue
-                    self.bench_results_AA2[f'{gse}:{cond}:AA2'] = pd.Series(pvals)
+                    dname = f'{gse}:{cond}:AA2'
+                    deltas['Dataset'] = dname
+                    self.bench_results_AA2[dname] = pd.Series(pvals)
+                    self.bench_deltas_AA2 = pd.concat([self.bench_deltas_AA2, deltas], axis=0)
                 elif test == 'AA1': 
-                    pvals = self.AA1_test(pred, meta_, gse, cond)
+                    pvals, deltas = self.AA1_test(pred, meta_, gse, cond)
                     if pvals is None:
                         continue
+                    dname = f'{gse}:{cond}:AA1'
+                    deltas['Dataset'] = dname
                     self.bench_results_AA1[f'{gse}:{cond}:AA1'] = pd.Series(pvals)
+                    self.bench_deltas_AA1 = pd.concat([self.bench_deltas_AA1, deltas], axis=0)
                 else:
                     NotImplementedError("Following tests are currently available: ['AA2', 'AA1'].")
             
@@ -195,6 +203,7 @@ class EpiClocksBenchmarking:
         if self.verbose > 0:
             print(f'{gse}:{cond} - AA2 testing {len(disease_idx)} disease versus {len(healthy_idx)} healthy samples')
         pvals = {}
+        deltas = pd.DataFrame()
         for col in pred.columns:
             disease_true = meta.loc[disease_idx, 'Age'].values
             healthy_true = meta.loc[healthy_idx, 'Age'].values
@@ -209,7 +218,12 @@ class EpiClocksBenchmarking:
             else:
                 raise NotImplementedError()
             pvals[col] = pval
-        return pvals
+            deltas = pd.concat([deltas, 
+                                pd.DataFrame({'Condition':['AAC']*len(disease_delta) + ['HC']*len(healthy_delta), 
+                                              'Delta':np.concatenate([disease_delta, healthy_delta]),
+                                              'Model':col})
+                                ])
+        return pvals, deltas
 
     def AA1_test(self, pred, meta, gse, cond):
         #calculating wilcoxon test for positive age (>0) acceleration in disease cohort
@@ -220,6 +234,7 @@ class EpiClocksBenchmarking:
         if self.verbose > 0:
             print(f'{gse}:{cond} - AA1 testing {len(disease_idx)} disease samples')
         pvals = {}
+        deltas = pd.DataFrame()
         for col in pred.columns:
             disease_true = meta.loc[disease_idx, 'Age'].values
             disease_pred = pred.loc[disease_idx, col].values
@@ -231,7 +246,12 @@ class EpiClocksBenchmarking:
             else:
                 raise NotImplementedError()
             pvals[col] = pval
-        return pvals    
+            deltas = pd.concat([deltas, 
+                                pd.DataFrame({'Condition':['AAC']*len(disease_delta), 
+                                              'Delta':disease_delta,
+                                              'Model':col})
+                                ])
+        return pvals, deltas
     
     def CA_prediction_test(self) -> pd.DataFrame:
         full_meta = pd.concat(self.datasets_metadata.values(), axis=0)
