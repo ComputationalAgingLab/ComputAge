@@ -116,5 +116,15 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
 
         return(pd_prediction)
 
-        
+class pickleModel(PublishedClocksBaseEstimator):
+    def __init__(
+        self, name = 'phenoage', transform=None, preprocess=None) -> None:
+        self.transform = transform
+        self.name = name
+        self.model_file_path = os.path.join(models_path,dict_model_names_paths[self.name])
+        self.model_data = pd.read_csv(self.model_file_path)
+        self.features = self.model_data[['Feature_ID']][1:]
+        self.coefficients = np.array(self.model_data[['Coef']][1:])
+        self.preprocess = preprocess
+
 
