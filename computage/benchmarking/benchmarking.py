@@ -6,7 +6,10 @@ from tqdm import tqdm
 import pickle
 from scipy.stats import mannwhitneyu, wilcoxon, ttest_1samp, ttest_ind
 from statsmodels.stats.multitest import multipletests
+from matplotlib import pyplot as plt
+
 from computage.utils.data_utils import cond2class
+from computage.plots.benchplots import plot_class_bench, plot_medae, plot_bias
 
 class EpiClocksBenchmarking:
     def __init__(self, 
@@ -17,10 +20,11 @@ class EpiClocksBenchmarking:
                  age_limits_class_exclusions: list[str] | None = ['PGS'],
                  experiment_prefix: str = 'test',
                  delta_assumption: str = 'normal',
-                 correction_threshold: float = 0.05,
+                 pvalue_threshold: float = 0.05,
                  save_results: bool = True,
+                 plot_results: bool = True,
+                 save_data: bool = False,
                  output_folder: str ='./bench_results', 
-                 low_memory: bool = True,
                  verbose: int = 1,
                  ) -> None:
         """
@@ -34,12 +38,14 @@ class EpiClocksBenchmarking:
         self.age_limits_class_exclusions = age_limits_class_exclusions
         self.n_datasets = len(datasets_config)
         self.n_models = len(models_config['in_library']) + len(models_config['new_models'])
-        self.low_memory = low_memory
         self.save_results = save_results
-        self.output_folder = output_folder
+        self.plot_results = plot_results
+        self.save_data = save_data
+        self.output_folder = os.path.join(output_folder, experiment_prefix)
+        self.figure_folder = os.path.join(self.output_folder, 'figures')
         self.experiment_prefix = experiment_prefix
         self.delta_assumption = delta_assumption
-        self.correction_threshold = correction_threshold
+        self.pvalue_threshold = pvalue_threshold
         self.verbose = verbose
         print(f'{self.n_models} models will be tested on {self.n_datasets} datasets.')
         
@@ -64,6 +70,7 @@ class EpiClocksBenchmarking:
         """
         #preparation
         self.check_folder(self.output_folder)
+        self.check_folder(self.figure_folder)
         self.check_existence()
 
         #go!
@@ -122,7 +129,7 @@ class EpiClocksBenchmarking:
             #meta filtering
             no_na_indices = meta[~meta['Age'].isna()].index
             meta = meta.loc[no_na_indices]
-            meta['Age'] = meta['Age'].astype(float) #TODO: add function checking this behaviour
+            meta['Age'] = meta['Age'].astype(float) 
             
             for cond in conditions:
                 cl = cond2class([cond])[0]
@@ -153,27 +160,39 @@ class EpiClocksBenchmarking:
         
         #multiple testing correction of results. Note each model's pvalues are corrected individually.
         self.bench_results = pd.concat([self.bench_results_AA2, self.bench_results_AA1], axis=1)
-        corrected_results_AA2 = self.bench_results_AA2.T.apply(self.correction, axis=0).T 
-        corrected_results_AA1 = self.bench_results_AA1.T.apply(self.correction, axis=0).T 
-        self.corrected_results = pd.concat([corrected_results_AA2, corrected_results_AA1], axis=1)
-        self.corrected_results_bool = self.corrected_results < self.correction_threshold
+        self.corrected_results_AA2 = self.bench_results_AA2.T.apply(self.correction, axis=0).T 
+        self.corrected_results_AA1 = self.bench_results_AA1.T.apply(self.correction, axis=0).T 
+        self.corrected_results_AA2_bool = self.corrected_results_AA2 < self.pvalue_threshold
+        self.corrected_results_AA1_bool = self.corrected_results_AA1 < self.pvalue_threshold
 
-        #additional test of chronological age prediction accuracy
+        #auxilary tests of chronological age prediction accuracy
         #and age acceleration prediction bias
         self.CA_prediction_results = self.CA_prediction_test()
         self.CA_bias_results = self.CA_bias_test()
 
         if self.save_results:
-            self.bench_results.to_csv(os.path.join(self.output_folder, 
-                                                   f'{self.experiment_prefix}_bench_pvals.csv'))
-            self.corrected_results.to_csv(os.path.join(self.output_folder, 
-                                                       f'{self.experiment_prefix}_bench_adj_pvals.csv'))
-            self.corrected_results_bool.to_csv(os.path.join(self.output_folder, 
-                                                       f'{self.experiment_prefix}_bench_bools.csv'))
+            self.bench_results_AA2.to_csv(os.path.join(self.output_folder, 
+                                                   f'{self.experiment_prefix}_bench_AA2_pvals.csv'))
+            self.bench_results_AA1.to_csv(os.path.join(self.output_folder, 
+                                                   f'{self.experiment_prefix}_bench_AA1_pvals.csv'))            
+            self.corrected_results_AA2_bool.to_csv(os.path.join(self.output_folder, 
+                                                       f'{self.experiment_prefix}_bench_AA2_corrected_bools.csv'))
+            self.corrected_results_AA1_bool.to_csv(os.path.join(self.output_folder, 
+                                                       f'{self.experiment_prefix}_bench_AA1_corrected_bools.csv'))
             self.CA_prediction_results.to_csv(os.path.join(self.output_folder, 
                                                        f'{self.experiment_prefix}_bench_CA_pred_MAE.csv'))
             self.CA_bias_results.to_csv(os.path.join(self.output_folder, 
                                                        f'{self.experiment_prefix}_bench_CA_pred_bias.csv'))
+            #save the whole bench class
+            pd.to_pickle(self, os.path.join(self.output_folder, 
+                                            f'{self.experiment_prefix}_bench.pkl'))
+            
+        if self.plot_results:
+            self.plot_bench_results()
+
+        # Warning: extremely memory consuming operation!
+        if self.save_data:
+            pass
             
 
     def biolearn_predict(self, dnam, meta, model_key, imputation_method='none'):
@@ -293,3 +312,31 @@ class EpiClocksBenchmarking:
     @staticmethod
     def correction(x):
         return multipletests(x, method='fdr_bh')[1] #returns adjusted p-values only
+    
+
+    def plot_bench_results(self):
+        #plot AA2
+        if len(self.corrected_results_AA2_bool) > 0:
+            plot_class_bench(self.corrected_results_AA2_bool, 
+                                figsize=(11.0, 0.5 * (len(self.corrected_results_AA2_bool) + 1)))
+            plt.savefig(os.path.join(self.figure_folder, 'AA2_main.pdf'), format='pdf', dpi=180)
+            plt.close()
+
+        #plot AA1
+        if len(self.corrected_results_AA1_bool) > 0:
+            plot_class_bench(self.corrected_results_AA1_bool, 
+                                figsize=(11.0, 0.5 * (len(self.corrected_results_AA1_bool) + 1)))
+            plt.savefig(os.path.join(self.figure_folder, 'AA1_main.pdf'), format='pdf', dpi=180)
+            plt.close()
+        
+        #plot chronological age prediction accuracy results
+        plot_medae(self.CA_prediction_results, figsize=(11., 4.6), upper_bound=18) 
+        plt.tight_layout()
+        plt.savefig(os.path.join(self.figure_folder, 'CA_MedAE_main.pdf'), format='pdf', dpi=180)
+        plt.close()
+
+        #plot chronological age prediction bias results
+        plot_bias(self.CA_bias_results, figsize=(11, 4.6), ylims=[-10, 10])
+        plt.tight_layout()
+        plt.savefig(os.path.join(self.figure_folder, 'AA_bias_main.pdf'), format='pdf', dpi=180)
+        plt.close()

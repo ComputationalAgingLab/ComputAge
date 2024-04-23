@@ -36,9 +36,8 @@ def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
     vals.index.name = 'Model'
     vals = vals.sort_values('Total', ascending=False)
 
-    #############################
+
     ### PREPARE COLUMN FORMAT ###
-    #############################
     cmap = LinearSegmentedColormap.from_list(
         name="bugw", colors=["#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"], N=256
     )
@@ -91,11 +90,8 @@ def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
             )
     ]
 
-    ### PREPARE COLUMN FORMAT ###   
-
-
+    ### PLOT ###   
     fig, ax = plt.subplots(figsize=figsize)
-
     table = Table(
         vals.head(10),
         column_definitions=col_defs,

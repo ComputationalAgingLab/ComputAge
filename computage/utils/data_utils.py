@@ -63,8 +63,10 @@ def cond2class(conds: list) -> list:
         "MSD": ['SP','OP','OA','RA'],
         "MBD": ['OBS','IR','T1D','T2D','MBS', 'ASD', 'XOB'],
         "LVD": ['NAFLD','NASH','PBC','PSC','LF','HCC',],
-        "LUD": ['COPD', 'IPF'],
-        "PGS": ['WS', 'HGPS', 'CGL', 'DS', 'aWS', 'MDPS', 'ncLMNA']
+        "RSD": ['COPD', 'IPF'],
+        "PGS": ['WS', 'HGPS', 'CGL', 'DS', 'aWS', 'MDPS', 'ncLMNA'],
+        "KDD": ['CKD']
+        
     }
     classes = []
     for c in conds:
