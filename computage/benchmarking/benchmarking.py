@@ -28,8 +28,46 @@ class EpiClocksBenchmarking:
                  verbose: int = 1,
                  ) -> None:
         """
-        Docstring ...
+        Initialize the benchmarking of epigenetic aging clocks.
+
+        Parameters
+        ----------
+        models_config : dict
+            Configuration dictionary where keys are model names and values contain model-specific parameters.
+        datasets_config : dict
+            Configuration dictionary where keys are dataset names and values are dataset-specific parameters.
+        tissue_types : str or list of str, default 'BSB'
+            Tissue types to include in the benchmarking. Single string or list of strings representing tissue types.
+            'BSB' is a special key aliasing of ['Blood', 'Saliva', 'Buccal'].
+        age_limits : list, default [18, 90]
+            Age range to include in the analysis. List containing minimum and maximum age.
+        age_limits_class_exclusions : list of str, default ['PGS']
+            List of classes to be excluded from application age limits filtering.
+            For example, 'PGS' in the list means that people with progeria are tested
+            versus healthy control without exclusion of people younger than 18 years 
+            (lower limit of age_limits).
+        experiment_prefix : str, default 'test'
+            Prefix for the experiment name, used in saving results.
+        delta_assumption : str, default 'normal'
+            Assumption for distribution of age acceleration (\Delta). 
+            If 'normal', one-sided Welch's test is applied for AA2 hypothesis testing and
+            one-sided t-test for AA1 hypothesis testing. If 'none' one-sided nonparametric 
+            Mann-Whitney test is applied for AA2 and Wilcoxon test is used for AA1.
+        pvalue_threshold : float, default 0.05
+            P-value threshold for statistical significance in the AA2 and AA1 tasks.
+            This P-value threshold is applied after multiple testing correction procedure.
+        save_results : bool, default True
+            If True, save the benchmarking results to files.
+        plot_results : bool, default True
+            If True, generate and save plots of the results.
+        save_data : bool, default False
+            If True, save the methylation data and metadata used in the benchmarking.
+            Note these data are not filtered with respect to config and class parameters.
+        output_folder : str, default './bench_results'
+            Path to the folder where results and plots will be saved.
+        verbose : int, default 1, indicating the verbosity level.
         """
+        
         self.models_config = models_config
         self.datasets_config = datasets_config
         self.tissue_types = ['Blood', 'Saliva', 'Buccal'] if tissue_types=='BSB' else tissue_types
