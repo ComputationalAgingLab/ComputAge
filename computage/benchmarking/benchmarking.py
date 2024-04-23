@@ -96,6 +96,7 @@ class EpiClocksBenchmarking:
         self.bench_deltas_AA1 = pd.DataFrame()
         self.datasets_predictions = {}
         self.datasets_metadata = {}
+        self.datasets_data = {} if self.save_data else None
 
         ###Predict datasets and gather predictions
         for gse, conf in tqdm(self.datasets_config.items(), 
@@ -105,6 +106,10 @@ class EpiClocksBenchmarking:
             path, conditions, test = conf.values()
             dnam, meta = pd.read_pickle(path, compression='gzip').values()
             meta['GSE'] = gse
+            if self.save_data:
+                self.datasets_data[gse] = {}
+                self.datasets_data[gse]['data'] = dnam.copy()
+                self.datasets_data[gse]['meta'] = meta.copy()
             #initial tissue filtering
             meta['Age'] = meta['Age'].astype(float)
             tissue_indices = meta[meta['Tissue'].isin(self.tissue_types)].index
