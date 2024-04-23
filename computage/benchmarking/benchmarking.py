@@ -8,7 +8,7 @@ from scipy.stats import mannwhitneyu, wilcoxon, ttest_1samp, ttest_ind
 from statsmodels.stats.multitest import multipletests
 from matplotlib import pyplot as plt
 
-from computage.utils.data_utils import cond2class
+from computage.utils.data_utils import cond2class, download_meta, download_dataset
 from computage.plots.benchplots import plot_class_bench, plot_medae, plot_bias
 
 class EpiClocksBenchmarking:
@@ -41,8 +41,10 @@ class EpiClocksBenchmarking:
         self.save_results = save_results
         self.plot_results = plot_results
         self.save_data = save_data
+        self.meta_table_path = os.path.join(output_folder, 'meta_table.xlsx')
         self.output_folder = os.path.join(output_folder, experiment_prefix)
         self.figure_folder = os.path.join(self.output_folder, 'figures')
+        self.data_folder = os.path.join(self.output_folder, 'benchdata')
         self.experiment_prefix = experiment_prefix
         self.delta_assumption = delta_assumption
         self.pvalue_threshold = pvalue_threshold
@@ -57,12 +59,25 @@ class EpiClocksBenchmarking:
 
     def check_existence(self):
         """Check existense of all datasets in config."""
+        toremove = []
         for gse, conf in self.datasets_config.items():
             path, _, _ = conf.values()
-            assert exists(path), f'A dataset file {gse} does not exist at the path!'
-
-    def download_datasets(self): #TODO: add downloader for files
-        pass
+            if not exists(path):
+                print(f'A dataset file {gse} does not exist at the path! Start download...')
+                if not exists(self.meta_table_path):
+                    self.meta_table = download_meta(self.meta_table_path, open_file=True)
+                else:
+                    self.meta_table = pd.read_excel(self.meta_table_path)
+                try:
+                    download_dataset(self.meta_table, gse, self.data_folder)
+                    self.datasets_config[gse]['path'] = os.path.join(self.data_folder, f'{gse}.pkl.gz')
+                    print(f'Saved to {os.path.join(self.data_folder, f"{gse}.pkl.gz")}.')
+                except:
+                    print('Oops! We currently do not have this dataset.')
+                    toremove.append(gse)
+        for gse in toremove:        
+            del self.datasets_config[gse]
+                
 
     def run(self) -> None:
         """
@@ -71,6 +86,7 @@ class EpiClocksBenchmarking:
         #preparation
         self.check_folder(self.output_folder)
         self.check_folder(self.figure_folder)
+        self.check_folder(self.data_folder)
         self.check_existence()
 
         #go!
