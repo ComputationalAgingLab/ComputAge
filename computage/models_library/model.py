@@ -4,7 +4,6 @@ from sklearn.linear_model import LinearRegression
 
 # from biolearn.dunedin_pace import dunedin_pace_normalization
 from computage.deage.base import PublishedClocksBaseEstimator
-from computage.utils.nan_utils import impute_from_average, impute_from_standard
 from computage.settings import ROOTDIR
 import os
 
@@ -13,7 +12,7 @@ def get_clock_file(filename):
     clock_file_path = os.path.join(ROOTDIR, "models_library/clocks", filename)  
     return clock_file_path
 
-#horvath-specific ELU-like transform
+#Horvath-specific ELU-like transform
 def anti_trafo(x, adult_age=20):
     y = np.where(
         x < 0, (1 + adult_age) * np.exp(x) - 1, (1 + adult_age) * x + adult_age
@@ -24,6 +23,7 @@ def anti_trafo(x, adult_age=20):
 def identity(x):
     return x
 
+### model definitions are taken from biolearn: https://github.com/bio-learn/biolearn/blob/master/ ###
 
 model_definitions = {
     "Horvathv1": {
@@ -278,8 +278,6 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
             if self.imputation == 'sesame_450k':
                 ivalues = pd.read_csv(get_clock_file("sesame_450k_median.csv"), index_col=0)
                 self.imputation_values = ivalues.loc[self.coefficients.index]
-            
-            #TODO: create a vector of imputation values based on the model sites if sesame is chosen
 
         if self.transform is None:
             self.transform =  self.model_params.get("transform", identity)
@@ -290,129 +288,128 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
 
     def predict(self, 
                 X: pd.DataFrame
-                ):
-        intersection = self.coefficients.index.intersection(X.columns)
-        X_ = X[intersection]
-        return X_
-        #X_ = 
-        X_ = self.preprocess(X)
-
-        # Join the coefficients and dnam_data on the index
-        methylation_df = self.coefficients.join(dnam_data, how="inner")
-
+                ) -> pd.Series:
+        if self.imputation == 'none':
+            X_ = X.reindex(columns=self.coefficients.index, fill_value=0.)
+        elif self.imputation == 'sesame_450k':
+            X_ = X.reindex(columns=self.coefficients.index).fillna(self.imputation_values['median'])
+        elif self.imputation == 'average':
+            X_ = X.reindex(columns=self.coefficients.index)
+            averages = X_.mean(axis=0).fillna(0.) #fill with 0 if no values in a column
+            X_ = X_.fillna(averages)
+        
+        #preprocess block (currently we don't have preprocess functions)
+        X_ = self.preprocess(X_)
+        
         # Vectorized multiplication: multiply CoefficientTraining with all columns of dnam_data
-        result = (
-            methylation_df.iloc[:, 1:]
-            .multiply(methylation_df["CoefficientTraining"], axis=0)
-            .sum(axis=0)
-        )
+        wsum = X_.multiply(self.coefficients['CoefficientTraining']).sum(axis=1)
 
         # Return as a DataFrame
-        return result.apply(self.transform).to_frame(name="Predicted")
+        return wsum.apply(self.transform)
 
-    def methylation_sites(self):
+    def get_methylation_sites(self):
         return list(self.coefficients.index)
 
 
 
 
 ### TODO: rewrite this class
-class GrimageModel:
-    def __init__(self, coef_file, **metadata):
-        self.coefficients = pd.read_csv(
-            get_clock_file(coef_file), index_col=0
-        )
-        self.metadata = metadata
+# class GrimageModel:
+#     def __init__(self, coef_file, **metadata):
+#         self.coefficients = pd.read_csv(
+#             get_clock_file(coef_file), index_col=0
+#         )
+#         self.metadata = metadata
 
-    @classmethod
-    def from_definition(cls, clock_definition):
-        model_def = clock_definition["model"]
-        return cls(
-            model_def["file"],
-            **{k: v for k, v in clock_definition.items() if k != "model"},
-        )
+#     @classmethod
+#     def from_definition(cls, clock_definition):
+#         model_def = clock_definition["model"]
+#         return cls(
+#             model_def["file"],
+#             **{k: v for k, v in clock_definition.items() if k != "model"},
+#         )
 
-    def predict(self, geo_data):
-        if "sex" not in geo_data.metadata or "age" not in geo_data.metadata:
-            raise ValueError("Metadata must contain 'sex' and 'age' columns")
+#     def predict(self, geo_data):
+#         if "sex" not in geo_data.metadata or "age" not in geo_data.metadata:
+#             raise ValueError("Metadata must contain 'sex' and 'age' columns")
 
-        df = geo_data.dnam
+#         df = geo_data.dnam
 
-        # Transposing metadata so that its structure aligns with dnam (columns as samples)
-        transposed_metadata = geo_data.metadata.transpose()
+#         # Transposing metadata so that its structure aligns with dnam (columns as samples)
+#         transposed_metadata = geo_data.metadata.transpose()
 
-        # Add metadata rows to dnam DataFrame
-        df.loc["Age"] = transposed_metadata.loc["age"]
-        df.loc["Female"] = transposed_metadata.loc["sex"].apply(
-            lambda x: 1 if x == 1 else 0
-        )
-        df.loc["Intercept"] = 1
+#         # Add metadata rows to dnam DataFrame
+#         df.loc["Age"] = transposed_metadata.loc["age"]
+#         df.loc["Female"] = transposed_metadata.loc["sex"].apply(
+#             lambda x: 1 if x == 1 else 0
+#         )
+#         df.loc["Intercept"] = 1
 
-        grouped = self.coefficients.groupby("Y.pred")
-        all_data = pd.DataFrame()
+#         grouped = self.coefficients.groupby("Y.pred")
+#         all_data = pd.DataFrame()
 
-        for name, group in grouped:
-            if name == "COX":
-                cox_coefficients = group.set_index("var")["beta"]
-            elif name == "transform":
-                transform = group.set_index("var")["beta"]
-                m_age = transform["m_age"]
-                sd_age = transform["sd_age"]
-                m_cox = transform["m_cox"]
-                sd_cox = transform["sd_cox"]
-            else:
-                sub_clock_result = self.calculate_sub_clock(df, group)
-                all_data[name] = sub_clock_result
+#         for name, group in grouped:
+#             if name == "COX":
+#                 cox_coefficients = group.set_index("var")["beta"]
+#             elif name == "transform":
+#                 transform = group.set_index("var")["beta"]
+#                 m_age = transform["m_age"]
+#                 sd_age = transform["sd_age"]
+#                 m_cox = transform["m_cox"]
+#                 sd_cox = transform["sd_cox"]
+#             else:
+#                 sub_clock_result = self.calculate_sub_clock(df, group)
+#                 all_data[name] = sub_clock_result
 
-        all_data["Age"] = geo_data.metadata["age"]
-        all_data["Female"] = geo_data.metadata["sex"].apply(
-            lambda x: 1 if x == 1 else 0
-        )
+#         all_data["Age"] = geo_data.metadata["age"]
+#         all_data["Female"] = geo_data.metadata["sex"].apply(
+#             lambda x: 1 if x == 1 else 0
+#         )
 
-        all_data["COX"] = all_data.mul(cox_coefficients).sum(axis=1)
-        age_key = "DNAmGrimAge"
-        accel_key = "AgeAccelGrim"
-        # Calculate DNAmGrimAge
-        Y = (all_data["COX"] - m_cox) / sd_cox
-        all_data[age_key] = (Y * sd_age) + m_age
+#         all_data["COX"] = all_data.mul(cox_coefficients).sum(axis=1)
+#         age_key = "DNAmGrimAge"
+#         accel_key = "AgeAccelGrim"
+#         # Calculate DNAmGrimAge
+#         Y = (all_data["COX"] - m_cox) / sd_cox
+#         all_data[age_key] = (Y * sd_age) + m_age
 
-        # Calculate AgeAccelGrim
-        lm = LinearRegression().fit(
-            all_data[["Age"]].values, all_data[age_key].values
-        )
-        predictions = lm.predict(all_data[["Age"]].values)
-        all_data[accel_key] = all_data[age_key] - predictions
+#         # Calculate AgeAccelGrim
+#         lm = LinearRegression().fit(
+#             all_data[["Age"]].values, all_data[age_key].values
+#         )
+#         predictions = lm.predict(all_data[["Age"]].values)
+#         all_data[accel_key] = all_data[age_key] - predictions
 
-        # Drop COX column after computations
-        all_data.drop("COX", axis=1, inplace=True)
+#         # Drop COX column after computations
+#         all_data.drop("COX", axis=1, inplace=True)
 
-        return all_data
+#         return all_data
 
-    def calculate_sub_clock(self, df, coefficients):
-        # Filter coefficients for only those present in df
-        relevant_coefficients = coefficients[
-            coefficients["var"].isin(df.index)
-        ]
+#     def calculate_sub_clock(self, df, coefficients):
+#         # Filter coefficients for only those present in df
+#         relevant_coefficients = coefficients[
+#             coefficients["var"].isin(df.index)
+#         ]
 
-        # Create a Series from the relevant coefficients, indexed by 'var'
-        coefficients_series = relevant_coefficients.set_index("var")["beta"]
+#         # Create a Series from the relevant coefficients, indexed by 'var'
+#         coefficients_series = relevant_coefficients.set_index("var")["beta"]
 
-        # Align coefficients with df's rows and multiply, then sum across CpG sites for each sample
-        result = (
-            df.loc[coefficients_series.index]
-            .multiply(coefficients_series, axis=0)
-            .sum()
-        )
+#         # Align coefficients with df's rows and multiply, then sum across CpG sites for each sample
+#         result = (
+#             df.loc[coefficients_series.index]
+#             .multiply(coefficients_series, axis=0)
+#             .sum()
+#         )
 
-        return result
+#         return result
 
-    def rename_columns(self, data, old_names, new_names):
-        for old_name, new_name in zip(old_names, new_names):
-            data.rename(columns={old_name: new_name}, inplace=True)
+#     def rename_columns(self, data, old_names, new_names):
+#         for old_name, new_name in zip(old_names, new_names):
+#             data.rename(columns={old_name: new_name}, inplace=True)
 
-    def methylation_sites(self):
-        filtered_df = self.coefficients[
-            ~self.coefficients.index.isin(["COX", "transform"])
-        ]
-        unique_vars = set(filtered_df["var"]) - {"Intercept", "Age", "Female"}
-        return list(unique_vars)
+#     def methylation_sites(self):
+#         filtered_df = self.coefficients[
+#             ~self.coefficients.index.isin(["COX", "transform"])
+#         ]
+#         unique_vars = set(filtered_df["var"]) - {"Intercept", "Age", "Female"}
+#         return list(unique_vars)

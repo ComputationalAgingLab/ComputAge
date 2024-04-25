@@ -8,6 +8,7 @@ from scipy.stats import mannwhitneyu, wilcoxon, ttest_1samp, ttest_ind
 from statsmodels.stats.multitest import multipletests
 from matplotlib import pyplot as plt
 
+from computage.models_library.model import LinearMethylationModel
 from computage.utils.data_utils import cond2class, download_meta, download_dataset
 from computage.plots.benchplots import plot_class_bench, plot_medae, plot_bias
 
@@ -121,11 +122,14 @@ class EpiClocksBenchmarking:
         """
         Run epigenetic clocks benchmarking!
         """
-        #preparation
+        #output and files preparation
         self.check_folder(self.output_folder)
         self.check_folder(self.figure_folder)
         self.check_folder(self.data_folder)
         self.check_existence()
+        
+        #initialize models
+        self.models = self.prepare_models()
 
         #go!
         self.bench_results_AA2 = pd.DataFrame()
@@ -157,12 +161,14 @@ class EpiClocksBenchmarking:
             #################################
             ###Should be modified in future## 
             #################################
+
             predictions = {}
             with tqdm(total=self.n_models, desc='Models', leave=False) as pbar:
                 # two options here: our prediction and biolearn prediction, our is currently developing
                 in_library_keys = list(self.models_config['in_library'].keys())
                 for key in in_library_keys:
-                    predictions[key] = self.biolearn_predict(dnam, meta, key, imputation_method='none') #tmp
+                    # predictions[key] = self.biolearn_predict(dnam, meta, key, imputation_method='none') #tmp
+                    predictions[key] = self.models[key].predict(dnam)
                     pbar.update(1)
 
                 #de novo clocks prediction                     
@@ -242,6 +248,8 @@ class EpiClocksBenchmarking:
                                                        f'{self.experiment_prefix}_bench_CA_pred_MAE.csv'))
             self.CA_bias_results.to_csv(os.path.join(self.output_folder, 
                                                        f'{self.experiment_prefix}_bench_CA_pred_bias.csv'))
+            #remove redundant elements before pickling
+            del self.models
             #save the whole bench class
             pd.to_pickle(self, os.path.join(self.output_folder, 
                                             f'{self.experiment_prefix}_bench.pkl'))
@@ -253,23 +261,29 @@ class EpiClocksBenchmarking:
         if self.save_data:
             pass
             
+    def prepare_models(self) -> dict:
+        models = {}
+        for name, params in self.models_config['in_library'].items():
+            lmm = LinearMethylationModel(name, **params)
+            models[name] = lmm
+        return models
 
-    def biolearn_predict(self, dnam, meta, model_key, imputation_method='none'):
-        from biolearn.data_library import GeoData
-        from biolearn.model_gallery import ModelGallery
-        gallery = ModelGallery()
-        ###TMP###
-        # if 'Gender' not in meta.columns:
-        #     meta['Gender'] = np.nan
-        # meta = meta.rename(columns={'Age':'age', 'Gender':'sex'})
-        # meta['age'] = meta['age'].astype(float)
-        # meta['sex'] = meta['sex'].map({'M':2, 'F':1})
-        #########
-        data = GeoData(meta, dnam.T) 
-        #published clocks prediction
-        results = gallery.get(model_key, 
-                              imputation_method=imputation_method).predict(data)
-        return results['Predicted']
+    # def biolearn_predict(self, dnam, meta, model_key, imputation_method='none'):
+    #     from biolearn.data_library import GeoData
+    #     from biolearn.model_gallery import ModelGallery
+    #     gallery = ModelGallery()
+    #     ###TMP###
+    #     # if 'Gender' not in meta.columns:
+    #     #     meta['Gender'] = np.nan
+    #     # meta = meta.rename(columns={'Age':'age', 'Gender':'sex'})
+    #     # meta['age'] = meta['age'].astype(float)
+    #     # meta['sex'] = meta['sex'].map({'M':2, 'F':1})
+    #     #########
+    #     data = GeoData(meta, dnam.T) 
+    #     #published clocks prediction
+    #     results = gallery.get(model_key, 
+    #                           imputation_method=imputation_method).predict(data)
+    #     return results['Predicted']
 
     def AA2_test(self, pred, meta, gse, cond):
         #calculating mann-whitney test for difference in age acceleration between disease and healthy cohorts
