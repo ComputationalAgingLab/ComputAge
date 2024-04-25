@@ -161,7 +161,6 @@ class EpiClocksBenchmarking:
             #################################
             ###Should be modified in future## 
             #################################
-
             predictions = {}
             with tqdm(total=self.n_models, desc='Models', leave=False) as pbar:
                 # two options here: our prediction and biolearn prediction, our is currently developing
@@ -267,23 +266,6 @@ class EpiClocksBenchmarking:
             lmm = LinearMethylationModel(name, **params)
             models[name] = lmm
         return models
-
-    # def biolearn_predict(self, dnam, meta, model_key, imputation_method='none'):
-    #     from biolearn.data_library import GeoData
-    #     from biolearn.model_gallery import ModelGallery
-    #     gallery = ModelGallery()
-    #     ###TMP###
-    #     # if 'Gender' not in meta.columns:
-    #     #     meta['Gender'] = np.nan
-    #     # meta = meta.rename(columns={'Age':'age', 'Gender':'sex'})
-    #     # meta['age'] = meta['age'].astype(float)
-    #     # meta['sex'] = meta['sex'].map({'M':2, 'F':1})
-    #     #########
-    #     data = GeoData(meta, dnam.T) 
-    #     #published clocks prediction
-    #     results = gallery.get(model_key, 
-    #                           imputation_method=imputation_method).predict(data)
-    #     return results['Predicted']
 
     def AA2_test(self, pred, meta, gse, cond):
         #calculating mann-whitney test for difference in age acceleration between disease and healthy cohorts
