@@ -28,8 +28,6 @@ def introduce_nans(X: pd.DataFrame,
     X_nan = X_nan.mask(mask)   
     return X_nan
 
-### IMPUTATION implementation from biolearn: https://github.com/bio-learn/biolearn/blob/master/ ###
-### TODO: rewrite this function
 def impute_from_average(dnam, cpgs_to_impute=None):
     """
     Impute all missing values in a DNA methylation dataset using the average from the dataset itself.
@@ -52,7 +50,9 @@ def impute_from_average(dnam, cpgs_to_impute=None):
 
     return X_filled
 
-
+### IMPUTATION implementation from biolearn: https://github.com/bio-learn/biolearn/blob/master/ ###
+### TODO: rewrite this function
+'''
 def hybrid_impute(dnam, cpg_source, required_cpgs, threshold=0.8):
     """
     Imputes missing values in a DNA methylation dataset based on a threshold. 
@@ -92,3 +92,4 @@ def hybrid_impute(dnam, cpg_source, required_cpgs, threshold=0.8):
         df_filled.loc[cpg] = cpg_source.loc[cpg]
 
     return df_filled.sort_index()
+'''
