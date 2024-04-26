@@ -3,7 +3,10 @@ import numpy as np
 import requests
 from urllib.parse import urlencode
 import os
-from computage.configs.links_config import META_DATASETS_LINK, BASE_DATA_URL
+#from computage.configs.links_config import META_DATASETS_LINK, BASE_DATA_URL
+
+BASE_DATA_URL = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
+META_DATASETS_LINK = 'https://disk.yandex.ru/i/wSl9TDkomchDYw'
 
 def test_dataset(path: str, compression: str = 'gzip') -> None:
     """
