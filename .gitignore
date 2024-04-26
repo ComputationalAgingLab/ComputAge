@@ -168,3 +168,5 @@ computage/data_library/data_test1.csv
 computage/data_library/data_test2.csv
 computage/deage/meta_table_datasets.xlsx
 computage/utils/__pycache__
+computage/deage/GSE132203.pkl.gz
+computage/deage/GSE132203.pkl
