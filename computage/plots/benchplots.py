@@ -11,9 +11,19 @@ from computage.utils.data_utils import cond2class
 from scipy.stats import norm
 import pandas as pd
 
-def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
+def plot_class_bench(results: pd.DataFrame, 
+                     figsize=(12.5, 7), 
+                     firstcolwidth=4.1):
     """
-        Docstring ...
+        Plot results of benchmark in a form of formatted table, where
+        columns correspond to different classes and rows are different
+        models. Entries of the table correspond to number of datasets where
+        clocks successfully predicted age acceleration.
+
+        - Can be used for AA2 and AA1 tasks.
+        - Accept task boolean results as input.
+
+        returns: matplotlib.pyplot.axes 
     """
 
     ### prepare data for plotting ###
@@ -93,7 +103,7 @@ def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
     ### PLOT ###   
     fig, ax = plt.subplots(figsize=figsize)
     table = Table(
-        vals.head(10),
+        vals.head(20),
         column_definitions=col_defs,
         row_dividers=True,
         footer_divider=True,
@@ -109,9 +119,13 @@ def plot_class_bench(results, figsize=(12.5, 7), firstcolwidth=4.1):
     return ax
 
 
-def plot_medae(result, figsize=(5.5, 3), upper_bound=18):
+def plot_medae(result: pd.DataFrame, figsize=(5.5, 3), upper_bound=18):
     """
-        Docstring
+        Plot models median absolute prediction error in a form of barplot.
+
+        - Accept CA_pred_MAE task numerical results as input.
+
+        returns: matplotlib.pyplot.axes 
     """
     fig, axes = plt.subplots(1, 1, figsize=figsize)
     color_iters = sns.color_palette('muted') 
@@ -143,7 +157,14 @@ def plot_medae(result, figsize=(5.5, 3), upper_bound=18):
     return axes
 
 
-def plot_bias(result, figsize=(5.5, 3), ylims=[-20, 20]):
+def plot_bias(result: pd.DataFrame, figsize=(5.5, 3), ylims=[-20, 20]):
+    """
+        Plot models median prediction error in a form of barplot.
+
+        - Accept CA_pred_bias task numerical results as input.
+
+        returns: matplotlib.pyplot.axes 
+    """
     fig, axes = plt.subplots(1, 1, figsize=figsize)
     color_iters = sns.color_palette('muted') 
 

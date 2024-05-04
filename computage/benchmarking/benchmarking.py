@@ -8,9 +8,10 @@ from scipy.stats import mannwhitneyu, wilcoxon, ttest_1samp, ttest_ind
 from statsmodels.stats.multitest import multipletests
 from matplotlib import pyplot as plt
 
-from computage.models_library.model import LinearMethylationModel
-from computage.utils.data_utils import cond2class, download_meta, download_dataset
+from computage.models_library.model import LinearMethylationModel, GrimAgeModel, model_definitions
+from computage.utils.data_utils import cond2class, download_meta, download_dataset, construct_config
 from computage.plots.benchplots import plot_class_bench, plot_medae, plot_bias
+from huggingface_hub import snapshot_download
 
 class EpiClocksBenchmarking:
     def __init__(self, 
@@ -26,6 +27,7 @@ class EpiClocksBenchmarking:
                  plot_results: bool = True,
                  save_data: bool = False,
                  output_folder: str ='./bench_results', 
+                 data_repository: str = 'huggingface',
                  verbose: int = 1,
                  ) -> None:
         """
@@ -80,10 +82,12 @@ class EpiClocksBenchmarking:
         self.save_results = save_results
         self.plot_results = plot_results
         self.save_data = save_data
-        self.meta_table_path = os.path.join(output_folder, 'meta_table.xlsx')
-        self.output_folder = os.path.join(output_folder, experiment_prefix)
+        self.root_folder = output_folder
+        self.meta_table_path = os.path.join(self.root_folder, 'meta_table.xlsx')
+        self.data_folder = os.path.join(self.root_folder, 'benchdata')
+        self.output_folder = os.path.join(self.root_folder, experiment_prefix)
         self.figure_folder = os.path.join(self.output_folder, 'figures')
-        self.data_folder = os.path.join(self.output_folder, 'benchdata')
+        self.data_repository = data_repository
         self.experiment_prefix = experiment_prefix
         self.delta_assumption = delta_assumption
         self.pvalue_threshold = pvalue_threshold
@@ -116,17 +120,37 @@ class EpiClocksBenchmarking:
                     toremove.append(gse)
         for gse in toremove:        
             del self.datasets_config[gse]
-                
+
+    def download_from_huggingface(self):
+        snapshot_download(
+                repo_id='computage/computage_bench', 
+                repo_type="dataset",
+                local_dir=self.data_folder)
 
     def run(self) -> None:
         """
         Run epigenetic clocks benchmarking!
         """
+        if self.verbose > 0:
+            print(f'Run benchmarking!')
         #output and files preparation
+        self.check_folder(self.root_folder)
         self.check_folder(self.output_folder)
         self.check_folder(self.figure_folder)
         self.check_folder(self.data_folder)
-        self.check_existence()
+        
+        if self.verbose > 0: 
+            print(f'Check data.')
+        if self.data_repository == 'huggingface':
+            self.download_from_huggingface()
+            samples_meta = pd.read_csv(os.path.join(self.data_folder, 'computage_bench_meta.tsv'), 
+                           sep='\t', index_col=0)
+        else:
+            self.check_existence()
+
+        #prepare dataconfig
+        if self.data_repository == 'huggingface':
+            self.datasets_config = construct_config(self.data_folder, self.datasets_config)
         
         #initialize models
         self.models = self.prepare_models()
@@ -146,7 +170,12 @@ class EpiClocksBenchmarking:
                               desc='Datasets'):
             #import data
             path, conditions, test = conf.values()
-            dnam, meta = pd.read_pickle(path, compression='gzip').values()
+            if self.data_repository == 'huggingface':
+                dnam = pd.read_parquet(path).T
+                meta = samples_meta[samples_meta['DatasetID'] == gse].copy()
+                meta = meta.loc[dnam.index]
+            else:
+                dnam, meta = pd.read_pickle(path, compression='gzip').values()
             meta['GSE'] = gse
             if self.save_data:
                 self.datasets_data[gse] = {}
@@ -167,7 +196,10 @@ class EpiClocksBenchmarking:
                 in_library_keys = list(self.models_config['in_library'].keys())
                 for key in in_library_keys:
                     # predictions[key] = self.biolearn_predict(dnam, meta, key, imputation_method='none') #tmp
-                    predictions[key] = self.models[key].predict(dnam)
+                    if model_definitions[key]["model"]["type"] == "LinearMethylationModel":
+                        predictions[key] = self.models[key].predict(dnam)
+                    else:
+                        predictions[key] = self.models[key].predict(dnam, meta)
                     pbar.update(1)
 
                 #de novo clocks prediction                     
@@ -233,6 +265,7 @@ class EpiClocksBenchmarking:
         #and age acceleration prediction bias
         self.CA_prediction_results = self.CA_prediction_test()
         self.CA_bias_results = self.CA_bias_test()
+        self.total_score = self.compute_total_score()
 
         if self.save_results:
             self.bench_results_AA2.to_csv(os.path.join(self.output_folder, 
@@ -263,8 +296,11 @@ class EpiClocksBenchmarking:
     def prepare_models(self) -> dict:
         models = {}
         for name, params in self.models_config['in_library'].items():
-            lmm = LinearMethylationModel(name, **params)
-            models[name] = lmm
+            if model_definitions[name]["model"]["type"] == "LinearMethylationModel":
+                m = LinearMethylationModel(name, **params)
+            else:
+                m = GrimAgeModel(name, **params)
+            models[name] = m
         return models
 
     def AA2_test(self, pred, meta, gse, cond):
@@ -354,6 +390,16 @@ class EpiClocksBenchmarking:
         result['absMedE'] = np.abs(result['MedE'])
         result = result.sort_values('absMedE', ascending=True)
         return result
+    
+    def compute_total_score(self) -> pd.Series:
+        aa2_score = self.corrected_results_AA2_bool.sum(axis=1) 
+        aa1_score = self.corrected_results_AA1_bool.sum(axis=1)
+        mad = self.CA_prediction_results.set_index('index')['MAE']
+        relu_md = np.maximum(0, self.CA_bias_results.set_index('index')['MedE'])
+        total_score = aa2_score + aa1_score * (1 - relu_md / mad)
+        total_score = total_score.sort_values(ascending=False)
+        total_score = round(total_score, 1)
+        return total_score
     
     @staticmethod
     def check_predictions(preds: np.ndarray | pd.Series, 
