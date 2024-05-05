@@ -437,7 +437,7 @@ class EpiClocksBenchmarking:
         plt.close()
 
         #plot chronological age prediction bias results
-        plot_bias(self.CA_bias_results, figsize=(11, 4.6), ylims=[-10, 10])
+        plot_bias(self.CA_bias_results, figsize=(11, 4.6))
         plt.tight_layout()
         plt.savefig(os.path.join(self.figure_folder, 'AA_bias_main.pdf'), format='pdf', dpi=180)
         plt.close()
