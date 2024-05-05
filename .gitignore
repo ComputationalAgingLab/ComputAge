@@ -163,10 +163,11 @@ computage/models_library/lookbioleran.ipynb
 # IDE
 .idea
 computage/data_library/data_test.csv
-computage/deage/GSE41169_series_matrix.txt
+
 computage/data_library/data_test1.csv
 computage/data_library/data_test2.csv
-computage/deage/meta_table_datasets.xlsx
+meta_table_datasets.xlsx
 computage/utils/__pycache__
-computage/deage/GSE132203.pkl.gz
-computage/deage/GSE132203.pkl
+GSE41169_series_matrix.txt
+GSE132203.pkl.gz
+GSE132203.pkl
