@@ -43,8 +43,8 @@ HaftornEPIC2021,Homo sapiens,Coord Blood,"Haftorn, K.L. et al.",2021,176,Linear 
 LeeRefinedRobust,Homo sapiens,Placenta,"Lee,Y. et al.",2019,395,Linear model,"Gestational age (weeks) 
 >36 weeks",31235674,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6628997/bin/aging-11-102049-s001.csv,1,1,1,1
 McCartney2018Blood_HDL,Homo sapiens,Blood,"McCartney, D.L et al.",2018,737,"Linear model, LASSO",HDL cholesterol (mmol/L),30257690,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6158884/bin/13059_2018_1514_MOESM1_ESM.xlsx,1,0,0,0
-Xu2017Hepato,Homo sapiens,Circulating DNA,Xu R.H. et al.,2017,10,"Linear model, LASSO",Hepatocellular Carcinoma Status,29035356,,https://pubmed.ncbi.nlm.nih.gov/29035356/ Table 2.,1,0,0,0
-Xu2017HepatoPrognosis,Homo sapiens,Circulating DNA,Xu R.H. et al.,2017,8,"Linear model, LASSO-Cox",Hepatocellular Carcinoma Survival Prognosis,29035356,,https://pubmed.ncbi.nlm.nih.gov/29035356/ Table 1.,0,0,0,0
+Xu2017Hepato,Homo sapiens,Blood,Xu R.H. et al.,2017,10,"Linear model, LASSO",Hepatocellular Carcinoma Status,29035356,,https://pubmed.ncbi.nlm.nih.gov/29035356/ Table 2.,1,0,0,0
+Xu2017HepatoPrognosis,Homo sapiens,Blood,Xu R.H. et al.,2017,8,"Linear model, LASSO-Cox",Hepatocellular Carcinoma Survival Prognosis,29035356,,https://pubmed.ncbi.nlm.nih.gov/29035356/ Table 1.,0,0,0,0
 McCartney2018Blood_LDL,Homo sapiens,Blood,"McCartney, D.L et al.",2018,233,"Linear model, LASSO",LDL with remnant cholesterol (mmol/L),30257690,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6158884/bin/13059_2018_1514_MOESM1_ESM.xlsx,1,0,0,0
 GrimAgeV1,Homo sapiens,Blood,"Lu, A. et al.",2019,multi,-,Mortality Adjusted Age (Years),30669119,,https://github.com/bio-learn/biolearn/blob/master/biolearn/data/GrimAgeV1.csv,1,0,0,1
 GrimAgeV2,Homo sapiens,Blood,"Lu, A. et al.",2022,multi,-,Mortality Adjusted Age (Years),36516495,,https://github.com/bio-learn/biolearn/blob/master/biolearn/data/GrimAgeV2.csv,1,0,0,1
