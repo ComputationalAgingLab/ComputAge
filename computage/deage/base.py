@@ -99,7 +99,7 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
     def fit(self,X,y):
             self.is_fitted_ = True
 
-    def predict(self, X):
+    def predict(self, X: pd.DataFrame) -> pd.Series:
         """
         X - датасет для распознавания, принимает в себя pandas 
         table with Feature1, F2, F3 для всех строк (на пересечениях циферки)
