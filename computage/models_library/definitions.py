@@ -4,7 +4,7 @@ from computage.settings import ROOTDIR
 
 #function for clock file retrieval
 def get_clock_file(filename):
-    clock_file_path = os.path.join(ROOTDIR, "models_library/raw_models/", filename)  
+    clock_file_path = os.path.join(os.path.join(ROOTDIR, "models_library/raw_models"), filename)  
     return clock_file_path
 
 #Horvath-specific ELU-like transform
@@ -21,7 +21,7 @@ def identity(x):
 ### model definitions are taken from biolearn: https://github.com/bio-learn/biolearn/blob/master/ ###
 
 
-models_path = os.path.join(ROOTDIR,'/models_library/raw_models/')
+models_path = os.path.join(ROOTDIR,"models_library/raw_models")
 model_files = os.listdir(models_path)
 model_names = list(map(lambda a: a.replace('.csv','').lower(), model_files))
 
