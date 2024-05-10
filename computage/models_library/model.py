@@ -18,7 +18,7 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         self.preprocess = preprocess
 
         #load the model
-        self.model_file_path = get_clock_file(self.file)
+        self.model_file_path = get_clock_file(self.name)
         self.model_data = pd.read_csv(self.model_file_path)
         self.features = self.model_data[['Feature_ID']][1:]
         self.coefficients = np.array(self.model_data[['Coef']][1:])
@@ -41,6 +41,10 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
 
     def introduce_nans():
         pass
+
+    def fit():
+        is_fitted = True
+        return(is_fitted)
 
     def predict(self, 
                 X: pd.DataFrame
