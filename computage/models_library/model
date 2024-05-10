@@ -18,10 +18,13 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         self.preprocess = preprocess
 
         #load the model
-        self.model_meta = model_definitions[name]
-        self.model_params = model_definitions[name]['model']
-        assert self.model_params['type'] == 'LinearMethylationModel', "Model is not Linear Methylation Model!"
-        self.coefficients = pd.read_csv(get_clock_file(self.model_params['file']), index_col=0)
+        self.model_file_path = get_clock_file(self.file)
+        self.model_data = pd.read_csv(self.model_file_path)
+        self.features = self.model_data[['Feature_ID']][1:]
+        self.coefficients = np.array(self.model_data[['Coef']][1:])
+        self.preprocess = preprocess
+
+        #self.coefficients = pd.read_csv(get_clock_file(self.model_params['file']), index_col=0)
 
         #use params defined in model metadata if not given in the init
         if self.imputation is None:
@@ -36,6 +39,8 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         if self.preprocess is None:
             self.preprocess = self.model_params.get("preprocess", identity)
 
+    def introduce_nans():
+        pass
 
     def predict(self, 
                 X: pd.DataFrame
