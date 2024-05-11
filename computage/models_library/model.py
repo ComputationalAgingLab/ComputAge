@@ -13,31 +13,34 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
                  preprocess=None, 
                 ) -> None:
         self.name = name
-        self.imputation = imputation
-        self.transform = transform
+        #self.transform = transform
         self.preprocess = preprocess
+        
 
         #load the model
         self.model_file_path = get_clock_file(self.name)
         self.model_data = pd.read_csv(self.model_file_path)
-        self.features = self.model_data[['Feature_ID']][1:]
+        features = self.model_data[['Feature_ID']][1:]
+        self.features = features['Feature_ID'].values
         self.coefficients = np.array(self.model_data[['Coef']][1:])
         self.preprocess = preprocess
+
+        self.intercept = self.model_data.iloc[0,1]
 
         #self.coefficients = pd.read_csv(get_clock_file(self.model_params['file']), index_col=0)
 
         #use params defined in model metadata if not given in the init
-        if self.imputation is None:
-            self.imputation = self.model_params.get('default_imputation', "sesame_450k")
-        if self.imputation == 'sesame_450k':
-            ivalues = pd.read_csv(get_clock_file("sesame_450k_median.csv"), index_col=0)
-            self.imputation_values = ivalues.loc[self.coefficients.index]
+        # if self.imputation is None:
+        #     self.imputation = self.model_params.get('default_imputation', "sesame_450k")
+        # if self.imputation == 'sesame_450k':
+        #     ivalues = pd.read_csv(get_clock_file("sesame_450k_median.csv"), index_col=0)
+        #     self.imputation_values = ivalues.loc[self.coefficients.index]
 
-        if self.transform is None:
-            self.transform =  self.model_params.get("transform", identity)
+        # if self.transform is None:
+        #     self.transform =  self.model_params.get("transform", identity)
             
-        if self.preprocess is None:
-            self.preprocess = self.model_params.get("preprocess", identity)
+        # if self.preprocess is None:
+        #     self.preprocess = self.model_params.get("preprocess", identity)
 
     def introduce_nans():
         pass
@@ -47,25 +50,27 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         return(is_fitted)
 
     def predict(self, 
-                X: pd.DataFrame
+                X: pd.DataFrame, imputation = None
                 ) -> pd.Series:
-        if self.imputation == 'none':
-            X_ = X.reindex(columns=self.coefficients.index, fill_value=0.)
+        self.imputation = imputation
+        if self.imputation == 'none' or self.imputation is None:
+            X_ = X.reindex(columns=self.features).fillna(0)
         elif self.imputation == 'sesame_450k':
-            X_ = X.reindex(columns=self.coefficients.index).fillna(self.imputation_values['median'])
+            X_ = X.reindex(columns=self.features).fillna(self.imputation_values['median'])
         elif self.imputation == 'average':
-            X_ = X.reindex(columns=self.coefficients.index)
+            X_ = X.reindex(columns=self.features)
             averages = X_.mean(axis=0).fillna(0.) #fill with 0 if no values in a column
             X_ = X_.fillna(averages)
         
         #preprocess block (currently we don't have preprocess functions)
-        X_ = self.preprocess(X_)
+        #X_ = self.preprocess(X_)
         
         # Vectorized multiplication: multiply CoefficientTraining with all columns of dnam_data
-        wsum = X_.multiply(self.coefficients['CoefficientTraining']).sum(axis=1)
+        wsum = X_.multiply(self.coefficients).sum(axis=1)
+        wsum += self.intercept
 
         # Return as a DataFrame
-        return wsum.apply(self.transform)
+        return wsum
 
     def get_methylation_sites(self):
-        return list(self.coefficients.index)
+        return list(self.features)
