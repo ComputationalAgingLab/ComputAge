@@ -70,7 +70,15 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         
         # Vectorized multiplication: multiply CoefficientTraining with all columns of dnam_data
         #wsum = X_.multiply(self.coefficients).sum(axis=1)
-        wsum = np.matmul( np.array(X_), self.coefficients)
+        if isinstance(X_, np.ndarray):
+            wsum = np.matmul( X_, self.coefficients)
+        else:
+            #print(type(X_.values))
+            #print(type(X_.values))
+            #print(X_.shape)
+            #print(self.coefficients.shape)
+            wsum = np.matmul( np.array(X_.values), self.coefficients.astype(float))     
+        
         wsum += self.intercept
 
         # Return as a DataFrame

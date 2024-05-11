@@ -2,7 +2,6 @@ import os
 import numpy as np
 from computage.settings import ROOTDIR
 
-
 dict_model_names_paths = {'hrsinchphenoage': 'HRSInCHPhenoAge.csv',
  'lin2016blood_99cpgs': 'Lin2016Blood_99CpGs.csv',
  'yingdamage': 'YingDamAge.csv',
