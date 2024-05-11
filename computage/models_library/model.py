@@ -12,7 +12,7 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
                  transform=None, 
                  preprocess=None, 
                 ) -> None:
-        #self.imputation = imputation
+        self.imputation = imputation
         self.name = name
         #self.transform = transform
         self.preprocess = preprocess
