@@ -4,7 +4,7 @@ from computage.settings import ROOTDIR
 
 #function for clock file retrieval
 def get_clock_file(modelname):
-    clock_file_path = os.path.join(os.path.join(ROOTDIR, "models_library/raw_models"), modelname)  
+    clock_file_path = os.path.join(os.path.join(ROOTDIR, "models_library/raw_models"), modelname +'.csv')  
     return clock_file_path
 
 #Horvath-specific ELU-like transform
