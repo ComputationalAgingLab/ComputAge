@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+from computage.settings import ROOTDIR
 from computage.deage.base import PublishedClocksBaseEstimator
 from computage.models_library.definitions import *
 
@@ -28,14 +29,16 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
 
         self.intercept = self.model_data.iloc[0,1]
 
+        #if self.imputation == 'sesame_450k':
+        ivalues = pd.read_csv(os.path.join(ROOTDIR, "models_library/raw_models/sesame_450k_median.csv"), index_col=0)
+        self.imputation_values = ivalues.loc[self.features]
+
         #self.coefficients = pd.read_csv(get_clock_file(self.model_params['file']), index_col=0)
 
         #use params defined in model metadata if not given in the init
         # if self.imputation is None:
         #     self.imputation = self.model_params.get('default_imputation', "sesame_450k")
-        # if self.imputation == 'sesame_450k':
-        #     ivalues = pd.read_csv(get_clock_file("sesame_450k_median.csv"), index_col=0)
-        #     self.imputation_values = ivalues.loc[self.coefficients.index]
+        
 
         # if self.transform is None:
         #     self.transform =  self.model_params.get("transform", identity)
@@ -53,7 +56,6 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
     def predict(self, 
                 X: pd.DataFrame, imputation = None
                 ) -> pd.Series:
-        self.imputation = imputation
         if self.imputation == 'none' or self.imputation is None:
             X_ = X.reindex(columns=self.features).fillna(0)
         elif self.imputation == 'sesame_450k':
@@ -68,7 +70,15 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         
         # Vectorized multiplication: multiply CoefficientTraining with all columns of dnam_data
         #wsum = X_.multiply(self.coefficients).sum(axis=1)
-        wsum = np.matmul( X_, self.coefficients)
+        if isinstance(X_, np.ndarray):
+            wsum = np.matmul( X_, self.coefficients)
+        else:
+            #print(type(X_.values))
+            #print(type(X_.values))
+            #print(X_.shape)
+            #print(self.coefficients.shape)
+            wsum = np.matmul( np.array(X_.values), self.coefficients.astype(float))     
+        
         wsum += self.intercept
 
         # Return as a DataFrame
