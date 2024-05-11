@@ -12,6 +12,7 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
                  transform=None, 
                  preprocess=None, 
                 ) -> None:
+        #self.imputation = imputation
         self.name = name
         #self.transform = transform
         self.preprocess = preprocess
@@ -66,11 +67,12 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         #X_ = self.preprocess(X_)
         
         # Vectorized multiplication: multiply CoefficientTraining with all columns of dnam_data
-        wsum = X_.multiply(self.coefficients).sum(axis=1)
+        #wsum = X_.multiply(self.coefficients).sum(axis=1)
+        wsum = np.matmul( X_, self.coefficients)
         wsum += self.intercept
 
         # Return as a DataFrame
         return wsum
 
     def get_methylation_sites(self):
-        return list(self.features)
+        return self.features
