@@ -52,10 +52,10 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
     def fit():
         is_fitted = True
         return(is_fitted)
-
+    
     def predict(self, 
                 X: pd.DataFrame, imputation = None
-                ) -> pd.Series:
+                ) -> pd.Series: # returns np
         if self.imputation == 'none' or self.imputation is None:
             X_ = X.reindex(columns=self.features).fillna(0)
         elif self.imputation == 'sesame_450k':
@@ -82,6 +82,9 @@ class LinearMethylationModel(PublishedClocksBaseEstimator):
         wsum += self.intercept
 
         # Return as a DataFrame
+        if (self.name.__contains__('horvath') or self.model_file_path.__contains__('han2020blood')):
+            wsum = anti_trafo(wsum)
+
         return wsum
 
     def get_methylation_sites(self):
