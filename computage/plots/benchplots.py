@@ -14,7 +14,9 @@ import pandas as pd
 import numpy as np
 
 def plot_class_bench(results: pd.DataFrame, 
-                     figsize=(12.5, 7), 
+                     figsize=(12.5, 7),
+                     classcolwidth=1.0,
+                     totalcolwidth=1.1, 
                      firstcolwidth=4.1):
     """
         Plot results of benchmark in a form of formatted table, where
@@ -65,7 +67,7 @@ def plot_class_bench(results: pd.DataFrame,
         base = classcounts[col]
         cldef = ColumnDefinition(
                         col,
-                        width=1.0,
+                        width=classcolwidth,
                         plot_fn=bar,
                         textprops={"ha": "center", "fontsize":10},
                         plot_kw={
@@ -82,7 +84,7 @@ def plot_class_bench(results: pd.DataFrame,
     col_defs = col_defs + [
         ColumnDefinition(
                         'Total',
-                        width=1.2,
+                        width=totalcolwidth,
                         plot_fn=bar,
                         border="left",
                         textprops={"ha": "center", "fontsize":10},
@@ -112,7 +114,7 @@ def plot_class_bench(results: pd.DataFrame,
         odd_row_color="#ffffff", 
         even_row_color="#f0f0f0",
         ax=ax,
-        textprops={"fontsize": 14},
+        # textprops={"fontsize": 10},
         row_divider_kw={"linewidth": 1, "linestyle": (0, (1, 5))},
         col_label_divider_kw={"linewidth": 1, "linestyle": "-"},
         column_border_kw={"linewidth": 1, "linestyle": "-"},

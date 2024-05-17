@@ -431,13 +431,13 @@ class EpiClocksBenchmarking:
             plt.close()
         
         #plot chronological age prediction accuracy results
-        plot_medae(self.CA_prediction_results, figsize=(11., 4.6), upper_bound=18) 
+        _, colordict = plot_medae(self.CA_prediction_results, figsize=(11., 4.6), upper_bound=18) 
         plt.tight_layout()
         plt.savefig(os.path.join(self.figure_folder, 'CA_MedAE_main.pdf'), format='pdf', dpi=180)
         plt.close()
 
         #plot chronological age prediction bias results
-        plot_bias(self.CA_bias_results, figsize=(11, 4.6))
+        plot_bias(self.CA_bias_results, colordict, figsize=(11, 4.6))
         plt.tight_layout()
         plt.savefig(os.path.join(self.figure_folder, 'AA_bias_main.pdf'), format='pdf', dpi=180)
         plt.close()

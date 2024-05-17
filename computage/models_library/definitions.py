@@ -21,7 +21,7 @@ def identity(x):
 ### model definitions are taken from biolearn: https://github.com/bio-learn/biolearn/blob/master/ ###
 
 model_definitions = {
-    "Horvathv1": {
+    "HorvathV1": {
         "year": 2013,
         "species": "Human",
         "tissue": "Multi-tissue",
@@ -53,7 +53,7 @@ model_definitions = {
             "transform": lambda sum: sum + 12.2169841,
         },
     },
-    "PhenoAge": {
+    "PhenoAgeV1": {
         "year": 2018,
         "species": "Human",
         "tissue": "Blood",
@@ -101,7 +101,7 @@ model_definitions = {
             "transform": lambda sum: sum - 511.9742762,
         },
     },
-    "Horvathv2": {
+    "HorvathV2": {
         "year": 2018,
         "species": "Human",
         "tissue": "Skin + blood",
@@ -215,7 +215,7 @@ model_definitions = {
             "transform": lambda sum: sum - 7.924780053,
         },
     },
-    "HRSInCHPhenoAge": {
+    "PhenoAgeV2": {
         "year": 2022,
         "species": "Human",
         "tissue": "Blood",
