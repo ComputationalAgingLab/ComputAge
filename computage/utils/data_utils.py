@@ -5,16 +5,27 @@ from urllib.parse import urlencode
 import os
 from computage.configs.links_config import META_DATASETS_LINK, BASE_DATA_URL
 
+# classcond = {
+#     "NDD": ['AD', 'PD', 'MS', 'DLB', 'CJD', 'MCI'],
+#     "CVD": ['HTN','AS','IHD','CVA','HF',],
+#     "ISD": ['CD','UC','IBD','IBS','SLE','HIV', 'HIV_TB'],
+#     "MSD": ['SP','OP','OA','RA'],
+#     "MBD": ['OBS','IR','T1D','T2D','MBS', 'ASD', 'XOB'],
+#     "LVD": ['NAFLD','NASH','PBC','PSC','LF','HCC',],
+#     "RSD": ['COPD', 'IPF', 'TB'],
+#     "PGS": ['WS', 'HGPS', 'CGL', 'DS', 'aWS', 'MDPS', 'ncLMNA'],
+#     "KDD": ['CKD']  
+# }
+
 classcond = {
-    "NDD": ['AD', 'PD', 'MS', 'DLB', 'CJD', 'MCI'],
-    "CVD": ['HTN','AS','IHD','CVA','HF',],
-    "ISD": ['CD','UC','IBD','IBS','SLE','HIV', 'HIV_TB', 'TB'],
-    "MSD": ['SP','OP','OA','RA'],
-    "MBD": ['OBS','IR','T1D','T2D','MBS', 'ASD', 'XOB'],
-    "LVD": ['NAFLD','NASH','PBC','PSC','LF','HCC',],
-    "RSD": ['COPD', 'IPF'],
-    "PGS": ['WS', 'HGPS', 'CGL', 'DS', 'aWS', 'MDPS', 'ncLMNA'],
-    "KDD": ['CKD']  
+    'HC':  ['HC'],
+    'CVD': ['AS', 'IHD', 'CVA'], 
+    'ISD': ['IBD', 'HIV', 'HIV_TB'], 
+    'MBD': ['XOB', 'T1D', 'T2D'], 
+    'MSD': ['OP', 'RA'], 
+    'NDD': ['MS', 'PD', 'AD', 'CJD'], 
+    'RSD': ['TB', 'COPD'], 
+    'PGS': ['CGL', 'WS', 'HGPS']
 }
 
 def check_dataset(path: str, compression: str = 'gzip') -> None:

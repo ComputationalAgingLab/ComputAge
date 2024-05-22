@@ -1,18 +1,22 @@
 from plottable import ColumnDefinition, Table
 from plottable.plots import bar
 from matplotlib.colors import LinearSegmentedColormap
-from matplotlib.cm import cividis
+from matplotlib.cm import cividis, viridis
 from matplotlib import pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.colors as color
 import seaborn as sns
 
 from computage.utils.data_utils import cond2class
+from computage.utils.plot_utils import *
 from scipy.stats import norm
 import pandas as pd
+import numpy as np
 
 def plot_class_bench(results: pd.DataFrame, 
-                     figsize=(12.5, 7), 
+                     figsize=(12.5, 7),
+                     classcolwidth=1.0,
+                     totalcolwidth=1.1, 
                      firstcolwidth=4.1):
     """
         Plot results of benchmark in a form of formatted table, where
@@ -63,11 +67,11 @@ def plot_class_bench(results: pd.DataFrame,
         base = classcounts[col]
         cldef = ColumnDefinition(
                         col,
-                        width=1.0,
+                        width=classcolwidth,
                         plot_fn=bar,
-                        textprops={"ha": "center"},
+                        textprops={"ha": "center", "fontsize":10},
                         plot_kw={
-                            "cmap": cmap,
+                            "cmap": class_light_cmap_dict[col].reversed(),
                             "plot_bg_bar": True,
                             "annotate": True,
                             "height": 0.9,
@@ -80,12 +84,12 @@ def plot_class_bench(results: pd.DataFrame,
     col_defs = col_defs + [
         ColumnDefinition(
                         'Total',
-                        width=1.2,
+                        width=totalcolwidth,
                         plot_fn=bar,
                         border="left",
-                        textprops={"ha": "center"},
+                        textprops={"ha": "center", "fontsize":10},
                         plot_kw={
-                            "cmap": cividis,
+                            "cmap": grays_cmap_light,
                             "plot_bg_bar": True,
                             "annotate": True,
                             "height": 0.9,
@@ -95,7 +99,7 @@ def plot_class_bench(results: pd.DataFrame,
                         ),
             ColumnDefinition(
                 name="Model",
-                textprops={"ha": "right", "weight": "bold"},
+                textprops={"ha": "right", "fontsize":10},
                 width=firstcolwidth,
             )
     ]
@@ -110,7 +114,7 @@ def plot_class_bench(results: pd.DataFrame,
         odd_row_color="#ffffff", 
         even_row_color="#f0f0f0",
         ax=ax,
-        textprops={"fontsize": 14},
+        # textprops={"fontsize": 10},
         row_divider_kw={"linewidth": 1, "linestyle": (0, (1, 5))},
         col_label_divider_kw={"linewidth": 1, "linestyle": "-"},
         column_border_kw={"linewidth": 1, "linestyle": "-"},
@@ -128,36 +132,43 @@ def plot_medae(result: pd.DataFrame, figsize=(5.5, 3), upper_bound=18):
         returns: matplotlib.pyplot.axes 
     """
     fig, axes = plt.subplots(1, 1, figsize=figsize)
-    color_iters = sns.color_palette('muted') 
+    # color_iters = sns.color_palette('muted') 
+
+    color_iters = viridis.reversed()(np.linspace(0, 1, len(result)))
+    result['Colors'] = [color.to_hex(c) for c in color_iters.tolist()]
 
     axes.grid(alpha=0.3, zorder=0)
-    sns.barplot(data=result, x='index', y='MAE', orient='v', ax=axes, palette=color_iters, zorder=100, )
-    axes.set_xlabel('')
-    axes.set_ylabel(f'Median Absolute Error, years')
-    axes.set_title('Chronological age prediction accuracy')
-    ytickmax = round(result['MAE'].max())
-    axes.set_yticks(range(0, ytickmax + 5, 5))
-    axes.set_xticklabels(axes.get_xticklabels(), rotation=45, ha='right')
-    axes.set_ylim([0, ytickmax + 3])
-    axes.axhline(upper_bound, color='grey', ls='--', alpha=0.5)
+    sns.barplot(data=result, y='index', x='MAE', orient='h', ax=axes, palette=color_iters, zorder=100, legend=False)
+    axes.set_ylabel('')
+    axes.set_xlabel(f'Median Absolute $\Delta$, years')
+    # axes.set_title('Chronological age prediction accuracy')
+    xtickmax = round(result['MAE'].max())
+    axes.set_xticks(range(0, xtickmax + 5, 5))
+    axes.set_xticklabels(axes.get_xticklabels(), ha='right')
+    axes.set_xlim([0, xtickmax + 3])
+    axes.axvline(upper_bound, color='grey', ls='--', alpha=0.5)
 
     for p in axes.patches:
-        h = p.get_height() 
-        step = 1 if h > 0 else -1
-        axes.annotate("%.1f" % p.get_height(), 
-                        xy=(p.get_x()+0.37, h + step),
+        h = p.get_width() 
+        step = 1.5 if h > 0 else -1
+        axes.annotate("%.1f" % p.get_width(), 
+                        xy=(h - step, p.get_y()+0.4),
                         xytext=(0, 0), 
                         textcoords='offset points', 
                         ha="center", 
                         va="center", 
                         zorder=100,
                         fontweight='bold',
+                        color='white',
                         fontsize=8)
+    colordict = result[['index', 'Colors']].set_index('index').to_dict()['Colors']
+    return axes, colordict
 
-    return axes
 
-
-def plot_bias(result: pd.DataFrame, figsize=(5.5, 3), ylims=[-20, 20]):
+def plot_bias(result: pd.DataFrame, 
+              colordict: dict, 
+              figsize=(5.5, 3), 
+              xlims=[-20, 20]):
     """
         Plot models median prediction error in a form of barplot.
 
@@ -166,23 +177,24 @@ def plot_bias(result: pd.DataFrame, figsize=(5.5, 3), ylims=[-20, 20]):
         returns: matplotlib.pyplot.axes 
     """
     fig, axes = plt.subplots(1, 1, figsize=figsize)
-    color_iters = sns.color_palette('muted') 
+    # color_iters = sns.color_palette('muted') 
 
     axes.grid(alpha=0.3, zorder=0)
-    sns.barplot(data=result, x='index', y='MedE', orient='v', ax=axes, palette=color_iters, zorder=100, )
-    axes.set_xlabel('')
-    axes.set_ylabel(f'Median Error, years')
-    axes.set_title('Chronological age prediction bias')
-    axes.set_xticklabels(axes.get_xticklabels(), rotation=45, ha='right');
-    axes.set_ylim(ylims);
-    axes.axhline(0, color='grey', ls='--', alpha=0.5)
+    sns.barplot(data=result, y='index', x='MedE', orient='h', hue='index', legend=False,
+                ax=axes, palette=colordict, zorder=100, )
+    axes.set_ylabel('')
+    axes.set_xlabel(f'Median $\Delta$, years')
+    # axes.set_title('Chronological age prediction bias')
+    axes.set_xticklabels(axes.get_xticklabels(), ha='right');
+    axes.set_xlim(xlims);
+    axes.axvline(0, color='grey', ls='--', alpha=0.5)
 
     for p in axes.patches:
-        h = 17 if p.get_height() > 17 else p.get_height()
-        h = -17 if p.get_height() < -17 else h
-        step = 1 if h > 0 else -1
-        axes.annotate("%.1f" % p.get_height(), 
-                        xy=(p.get_x()+0.37, h + step),
+        h = 17 if p.get_width() > 17 else p.get_width()
+        h = -17 if p.get_width() < -17 else h
+        step = 2.3 if h > 0 else -2.3
+        axes.annotate("%.1f" % p.get_width(), 
+                        xy=(h + step, p.get_y()+0.37),
                         xytext=(0, 0), 
                         textcoords='offset points', 
                         ha="center", 

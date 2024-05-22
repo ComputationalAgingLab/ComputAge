@@ -86,7 +86,7 @@ datasets_config_main = {
                                'test':'AA2'
                                },
                     'GSE145714':{'path':f'{DATASETS_PREFIX}GSE145714.pkl.gz',
-                               'conditions':['HIV_TB', 'TB'], 
+                               'conditions':['HIV_TB'], 
                                'test':'AA2'
                                },
                     'GSE185389':{'path':f'{DATASETS_PREFIX}GSE185389.pkl.gz',
