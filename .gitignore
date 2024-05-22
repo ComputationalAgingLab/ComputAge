@@ -1,3 +1,14 @@
+#data for testing
+data/
+figures/
+tmp/
+tmp_bench_results/
+playground.ipynb
+*.code-workspace
+test_spot.ipynb
+_*.ipynb
+_*.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
