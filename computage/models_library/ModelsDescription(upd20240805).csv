@@ -38,8 +38,8 @@ McCartney2018Blood_Education,Homo sapiens,Blood,"McCartney, D.L et al.",2018,373
 LeeControl,Homo sapiens,Placenta,"Lee,Y. et al.",2019,546,Linear model,Gestational age (weeks),31235674,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6628997/bin/aging-11-102049-s001.csv,1,1,1,1
 LeeRobust,Homo sapiens,Placenta,"Lee,Y. et al.",2019,558,Linear model,Gestational age (weeks),31235674,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6628997/bin/aging-11-102049-s001.csv,1,1,1,1
 Mayne2016Placenta,Homo sapiens,Placenta,Mayne et al.,2016,62,"Linear model, ElacticNet",Gestational age (weeks),27894195,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6040051/bin/epi-09-279-s6.xlsx,0,1,1,0
-Knight2016CordBlood,Homo sapiens,Coord Blood,"Knight, et al.",2016,148,"Linear model, ElacticNet",Gestational age (weeks),27717399,,https://static-content.springer.com/esm/art%3A10.1186%2Fs13059-016-1068-z/MediaObjects/13059_2016_1068_MOESM3_ESM.csv,1,1,1,1
-HaftornEPIC2021,Homo sapiens,Coord Blood,"Haftorn, K.L. et al.",2021,176,Linear model,Gestational age (weeks),33875015,,https://static-content.springer.com/esm/art%3A10.1186%2Fs13148-021-01055-z/MediaObjects/13148_2021_1055_MOESM6_ESM.csv,0,0,1,0
+Knight2016CordBlood,Homo sapiens,Cord Blood,"Knight, et al.",2016,148,"Linear model, ElacticNet",Gestational age (weeks),27717399,,https://static-content.springer.com/esm/art%3A10.1186%2Fs13059-016-1068-z/MediaObjects/13059_2016_1068_MOESM3_ESM.csv,1,1,1,1
+HaftornEPIC2021,Homo sapiens,Cord Blood,"Haftorn, K.L. et al.",2021,176,Linear model,Gestational age (weeks),33875015,,https://static-content.springer.com/esm/art%3A10.1186%2Fs13148-021-01055-z/MediaObjects/13148_2021_1055_MOESM6_ESM.csv,0,0,1,0
 LeeRefinedRobust,Homo sapiens,Placenta,"Lee,Y. et al.",2019,395,Linear model,"Gestational age (weeks) 
 >36 weeks",31235674,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6628997/bin/aging-11-102049-s001.csv,1,1,1,1
 McCartney2018Blood_HDL,Homo sapiens,Blood,"McCartney, D.L et al.",2018,737,"Linear model, LASSO",HDL cholesterol (mmol/L),30257690,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6158884/bin/13059_2018_1514_MOESM1_ESM.xlsx,1,0,0,0
