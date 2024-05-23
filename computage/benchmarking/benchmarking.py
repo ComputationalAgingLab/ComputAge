@@ -211,6 +211,7 @@ class EpiClocksBenchmarking:
                         dnam_ = dnam.reindex(columns = list(model.pls.feature_names_in_)).copy()
                     except:
                         dnam_ = dnam.reindex(columns = list(model.feature_names_in_)).copy()
+                        # zero imputation
                         dnam_ = dnam_.fillna(0.)
                     
                     preds_ = model.predict(dnam_)
@@ -441,3 +442,50 @@ class EpiClocksBenchmarking:
         plt.tight_layout()
         plt.savefig(os.path.join(self.figure_folder, 'AA_bias_main.pdf'), format='pdf', dpi=180)
         plt.close()
+
+
+def run_benchmark(models_config: dict, 
+				  datasets_config: dict = None,
+				  experiment_prefix: str = 'my_model_test',
+				  output_folder:str = './benchmark'):
+	"""
+    Runs a benchmarking experiment on a set of epigenetic clock models against 
+    all datasets in the benchmark.
+
+    Parameters:
+        models_config (dict): 
+            A dictionary containing configurations for the epigenetic 
+            clock models to be tested. 
+        datasets_config (dict, optional): 
+            A dictionary specifying the datasets to be used for benchmarking.
+            If not provided, the default `datasets_config_main` from `computage.configs.datasets_bench_config` is used.                           
+        experiment_prefix (str): 
+            A string prefix used to identify the experiment in output files. Default is 'my_model_test'.
+        output_folder (str): 
+            The folder path where the benchmarking results and data will be saved. Default is './benchmark'.
+
+    Returns:
+        EpiClocksBenchmarking: An instance of the EpiClocksBenchmarking class containing the results 
+        of the benchmarking experiment.
+    """
+	if datasets_config is None:
+		from computage.configs.datasets_bench_config import datasets_config_main
+		datasets_config = datasets_config_main
+
+	bench = EpiClocksBenchmarking(
+		models_config=models_config,
+		datasets_config=datasets_config,
+		tissue_types='BSB',
+		age_limits = [18, 90],
+		age_limits_class_exclusions= ['PGS'],
+		experiment_prefix=experiment_prefix,
+		delta_assumption = 'normal',
+		pvalue_threshold=0.05,
+		save_results=True,
+		save_data=False,
+		output_folder=output_folder,
+		data_repository='huggingface',
+		verbose=1
+	)   
+	bench.run()
+	return bench

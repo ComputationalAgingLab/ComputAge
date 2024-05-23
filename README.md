@@ -1,11 +1,15 @@
 # ComputAge
-A library for fullstack aging clocks design and benchmarking.
+A library for full-stack aging clocks design and benchmarking.
 
 *The full release version of the package is currently developing. Only bechmarking module is released and ready for use. Please see below.*
 
 ## Installation
 
+You can install the whole library with `pip`:
 
+`pip install computage`
+
+This provides all necessary instruments for aging clocks benchmarking.
 
 # ComputAgeBench
 
@@ -37,10 +41,45 @@ any conclusions upon it.**
 
 ## Usage (benchmarking)
 
+### sklearn-based model
 
+Suppose you trained brand-new epigenetic aging clocks model using classic `scikit-learn` library. You saved your model as `pickle` file. Then, the following block of code can be used for benchmarking your model. We also added several other published aging clocks for comparison with yours.
+```python
+from computage import run_benchmark
+
+#first define NaN imputation method for in_library models
+#for simlicity here we recommend to use imputation with zeros
+imputation = 'none'
+models_config = {
+    "in_library":{
+        'HorvathV1':{'imputation':imputation},
+        'Hannum':{'imputation':imputation},
+        'PhenoAgeV2':{'imputation':imputation},
+				},
+	#here we should define a name of our new model as well as path
+    #to the pickle file (.pkl) of the model
+    "new_models":{
+        #'my_new_model_name': {'path':/path/to/model.pkl}
+        }
+}
+#now run the benchmark
+bench = run_benchmark(models_config, 
+        experiment_prefix='my_model_test',
+        output_folder='./benchmark'
+        )
+#upon completion, the results will be saved in the folder you specified
+```
+### pytorch-based model
+[...upcoming...]
+
+## Reproducing paper results
+
+
+## Additional information
+[...Table with all clocks...]
 
 ## Cite us
-
+[...coming soon...]
 
 
 ## Contact
@@ -48,6 +87,8 @@ any conclusions upon it.**
 For any questions or clarifications, please reach out to: dmitrii.kriukov@skoltech.ru
 
 ## Acknowledgments
+
+
 
 
 
