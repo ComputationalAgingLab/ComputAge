@@ -1,3 +1,27 @@
+# **Multi-model platform for predicting biological age using DNA methylation and other age-associated data**
+![Python](https://img.shields.io/badge/python-v3.11+-blue.svg)
+![made with love](https://img.shields.io/badge/made%20with%20%E2%9D%A4%EF%B8%8F-8A2BE2)
+
+A repository containing the code accompanying the thesis "Multi-model platform for predicting biological age using DNA methylation and other age-associated data" by Aiusheeva A., Khairetdinova A., Kriukov D., Kuzmina E., Efimov E. ([link to thesis](https://docs.google.com/document/d/14n0dbZ__1WixYWfHOoA_MzKpy7_U_4bF0A2hsUm4ggA/edit?usp=sharing), [Link to slides](https://docs.google.com/presentation/d/1mGrtdA-2_gAEoWWa5XMw-bVd3PpfNBnS7KbofaOf0Gs/edit?usp=sharing))
+
+## Description
+
+DNA methylation (DNAm) has been widely used to estimate epigenetic age as a proxy metric of biological age in various research settings, for example, to test if some pro-longevity intervention such as rapamycin treatment or caloric restriction affects aging in short-term experiments. Multiple DNAm-based (and other omics-based) clock models have been described, but all of them perform differently from each other, so researchers often resort to several clocks simultaneously to substantiate their findings. Unfortunately, since all of these clocks were developed independently, they must be installed from separate places, and then processed and trained anew, which is highly inconvenient and might affect reproducibility. Currently, there is an R (Bioconductor) package called methylclock which allows to generate age predictions using a number of existing clock models, to check their correlation metrics, and to visualize them. However, it has several significant drawbacks (e.g., compatibility errors; lack of dataset normalization, QC, batch effect correction, and other processing steps; and lack of some well-known and widely employed clocks), as well as it's focused on DNAm only, which all makes this package of limited use. 
+
+We offer convenient and comprehensive tool for biological age estimation and comparison. This tool is the Python module Computage for fast and easy-to-use estimation of biological age.
+
+
+
+### Content of Repository
+
+The repository includes 7 jupyter notebooks named by the type of data under analysis with our analytical framework. The first three notebooks contain main results of the paper.
+
+- `workbook_dataset_assembly.ipynb` - Data assembling for the study
+- `lin_models_estimation_full.ipynb` - Linear models estimation workbook
+- `imputation_linmodels.ipynb` - Testing `average`, `none`, `sesame450k` imputation in linear models
+- `imputation_hc_phenoage.ipynb` - Testing `average`, `none`, `sesame450k` imputation in `phenoage2018`
+
+
 # **Installation**
 
 ```bash
@@ -67,3 +91,9 @@ print(r2_score(y_test, y_pred_test))
 - ***Nonlinear*** : `epitoc2`
 
 More info [link table name](link to csv table)
+
+## Datasets Used in Study
+All datasets used in the study can be found in `paper/Supplementary table 1.xlsx`
+
+## Models Used in Study
+All linear models used in the study can be found in `computage/models_library/ModelsDescription(upd20240805).csv`
