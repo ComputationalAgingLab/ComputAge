@@ -6,7 +6,7 @@ A repository containing the code accompanying the thesis "Multi-model platform f
 
 ## Description
 
-DNA methylation (DNAm) has been widely used to estimate epigenetic age as a proxy metric of biological age in various research settings, for example, to test if some pro-longevity intervention such as rapamycin treatment or caloric restriction affects aging in short-term experiments. Multiple DNAm-based (and other omics-based) clock models have been described, but all of them perform differently from each other, so researchers often resort to several clocks simultaneously to substantiate their findings. Unfortunately, since all of these clocks were developed independently, they must be installed from separate places, and then processed and trained anew, which is highly inconvenient and might affect reproducibility. Currently, there is an R (Bioconductor) package called methylclock which allows to generate age predictions using a number of existing clock models, to check their correlation metrics, and to visualize them. However, it has several significant drawbacks (e.g., compatibility errors; lack of dataset normalization, QC, batch effect correction, and other processing steps; and lack of some well-known and widely employed clocks), as well as it's focused on DNAm only, which all makes this package of limited use. 
+DNA methylation (DNAm) has been widely used to estimate epigenetic age as a proxy metric of biological age in various research settings, for example, to test if some pro-longevity intervention such as rapamycin treatment or caloric restriction affects aging in short-term experiments. Multiple DNAm-based (and other omics-based) clock models have been described, but all of them perform differently from each other, so researchers often resort to several clocks simultaneously to substantiate their findings. Unfortunately, since all of these clocks were developed independently, they must be installed from separate places, and then processed and trained anew, which is highly inconvenient and might affect reproducibility. Currently, there is an R (Bioconductor) package called methylclock which allows to generate age predictions using a number of existing clock models, to check their correlation metrics, and to visualize them. However, it has several significant drawbacks (e.g., compatibility errors; lack of dataset normalization, QC, batch effect correction, and other processing steps; and lack of some well-known and widely employed clocks), as well as it`s focused on DNAm only, which all makes this package of limited use. 
 
 We offer convenient and comprehensive tool for biological age estimation and comparison. This tool is the Python module Computage for fast and easy-to-use estimation of biological age.
 
@@ -49,19 +49,19 @@ from sklearn.metrics import r2_score, median_absolute_error
 from computage.utils.data_utils import download_meta, download_dataset
 from computage.models_library.model import LinearMethylationModel
 
-meta = download_meta('./meta_table_datasets.xlsx')
-download_dataset(meta, 'GSE132203', '.')
-df = pd.read_pickle('GSE132203.pkl')
+meta = download_meta(`./meta_table_datasets.xlsx`)
+download_dataset(meta, `GSE132203`, `.`)
+df = pd.read_pickle(`GSE132203.pkl`)
 ```
 ## Example with `phenoage` model, imputation by `average`
 ```python
-X = pd.DataFrame(df['data'])
-meta = pd.DataFrame(df['meta'])
-y = pd.DataFrame(meta['Age'])
-y_test = y.rename(columns={'Age': 'age'})
+X = pd.DataFrame(df[`data`])
+meta = pd.DataFrame(df[`meta`])
+y = pd.DataFrame(meta[`Age`])
+y_test = y.rename(columns={`Age`: `age`})
 
 
-model_phenoage = LinearMethylationModel(name='phenoage2018', imputation='average')
+model_phenoage = LinearMethylationModel(name=`phenoage2018`, imputation=`average`)
 y_pred_test = model_phenoage.predict(X)
        
 print(median_absolute_error(y_test, y_pred_test))
@@ -94,7 +94,8 @@ print(r2_score(y_test, y_pred_test))
 More info [link table name](link to csv table)
 
 ## Datasets Used in Study
-All datasets used in the study can be found in `paper/Supplementary table 1.xlsx`
+All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685`, `GSE203399`, `GSE32148`, `GSE87640`, `GSE42861`, `GSE62867`, `GSE56581`, `GSE107143`, `GSE62003`, `GSE53840`, `GSE87648`, `GSE49909`, `GSE56046`
+`paper/Supplementary table 1.xlsx`
 
 ## Models Used in Study
 All linear models used in the study can be found in `computage/models_library/ModelsDescription(upd20240805).csv`
