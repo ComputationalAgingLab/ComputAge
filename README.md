@@ -72,18 +72,37 @@ bench = run_benchmark(models_config,
 ### pytorch-based model
 [...upcoming...]
 
+
+### Explore the dataset
+In case you want just to explore our dataset locally, use the following commands for downloading.
+```python
+from huggingface_hub import snapshot_download
+snapshot_download(
+    repo_id='computage/computage_bench', 
+    repo_type="dataset",
+    local_dir='.')
+```
+Once downloaded, the dataset can be open with `pandas` (or any other `parquet` reader).
+```python
+import pandas as pd
+#let's choose a study id, for example `GSE100264`
+df = pd.read_parquet('data/computage_bench_data_GSE100264.parquet').T 
+#note we transpose data for more convenient perception
+#Don't forget to explore metadata (which is common for all datasets):
+meta = pd.read_csv('computage_bench_meta.tsv', sep='\t', index_col=0)
+```
+
 ## Reproducing paper results
 
 
 ## Additional information
 [...Table with all clocks...]
+---
 
 ## Cite us
 [...coming soon...]
 
-
 ## Contact
-
 For any questions or clarifications, please reach out to: dmitrii.kriukov@skoltech.ru
 
 ## Acknowledgments
