@@ -19,7 +19,8 @@ The repository includes 7 jupyter notebooks named by the type of data under anal
 - `workbook_dataset_assembly.ipynb` - Data assembling for the study
 - `lin_models_estimation_full.ipynb` - Linear models estimation workbook
 - `imputation_linmodels.ipynb` - Testing `average`, `none`, `sesame450k` imputation in linear models
-- `imputation_hc_phenoage.ipynb` - Testing `average`, `none`, `sesame450k` imputation in `phenoage2018`
+- `imputation_hc_phenoage.ipynb` - Testing `average`, `none`, `sesame450k` imputation in `phenoage2018` (light version of the notebook above)
+- `requirements.txt` - python modules that were used 
 
 
 # **Installation**
