@@ -16,7 +16,10 @@ We offer convenient and comprehensive tool for biological age estimation and com
 
 The repository includes 7 jupyter notebooks named by the type of data under analysis with our analytical framework. The first three notebooks contain main results of the paper.
 
-- `invitro_reprog_analysis.ipynb` - The main results for two in vitro reprogramming datasets. Have code used to render **Fig. 2i-k, 3d, 4e, 5c** (for Ohnuki reprogramming) and **Fig. 5d, S1a-c, S3a, S2c** (for Gill reprogramming) from the paper.
+- `workbook_dataset_assembly.ipynb` - Data assembling for the study
+- `lin_models_estimation_full.ipynb` - Linear models estimation workbook
+- `imputation_linmodels.ipynb` - Testing `average`, `none`, `sesame450k` imputation in linear models
+- `imputation_hc_phenoage.ipynb` - Testing `average`, `none`, `sesame450k` imputation in `phenoage2018`
 
 
 # **Installation**
