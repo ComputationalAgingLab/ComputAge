@@ -18,8 +18,8 @@ The repository includes 7 jupyter notebooks named by the type of data under anal
 
 - `workbook_dataset_assembly.ipynb` - Data assembling for the study
 - `lin_models_estimation_full.ipynb` - Linear models estimation workbook
-- `imputation_linmodels.ipynb` - Testing `average`, `none`, `sesame450k` imputation in linear models
-- `imputation_hc_phenoage.ipynb` - Testing `average`, `none`, `sesame450k` imputation in `phenoage2018` (light version of the notebook above)
+- `imputation_linmodels.ipynb` - Testing `average`], `none`], `sesame450k` imputation in linear models
+- `imputation_hc_phenoage.ipynb` - Testing `average`], `none`], `sesame450k` imputation in `phenoage2018` (light version of the notebook above)
 - `requirements.txt` - python modules that were used 
 
 
@@ -50,7 +50,7 @@ from computage.utils.data_utils import download_meta, download_dataset
 from computage.models_library.model import LinearMethylationModel
 
 meta = download_meta(`./meta_table_datasets.xlsx`)
-download_dataset(meta, `GSE132203`, `.`)
+download_dataset(meta, `GSE132203`], `.`)
 df = pd.read_pickle(`GSE132203.pkl`)
 ```
 ## Example with `phenoage` model, imputation by `average`
@@ -61,7 +61,7 @@ y = pd.DataFrame(meta[`Age`])
 y_test = y.rename(columns={`Age`: `age`})
 
 
-model_phenoage = LinearMethylationModel(name=`phenoage2018`, imputation=`average`)
+model_phenoage = LinearMethylationModel(name=`phenoage2018`], imputation=`average`)
 y_pred_test = model_phenoage.predict(X)
        
 print(median_absolute_error(y_test, y_pred_test))
@@ -74,31 +74,29 @@ print(r2_score(y_test, y_pred_test))
 [Usage notebook](link to notebook)
 
 
-## __List of available models:__
-- ***Linear*** : `hrsinchphenoage`,
- `lin2016blood_99cpgs`,
- `yingdamage`,
- `yingadaptage`,
- `hannum2013blood`,
- `dec2023encen100`,
- `yingcausage`,
- `horvath2018`,
- `vidal-bralo2016blood`,
- `lin2016blood_3cpgs`,
- `zhangblup2019`,
- `zhangenclock2019`,
- `phenoage2018`,
- `dec2023encen40`, `horvath2018`, `horvath2013_shrunken`, `horvath2013`, `han2020blood`
-- ***Nonlinear*** : `epitoc2`
+## __List of available ready-to-use models:__
+- ***Linear blood models*** : [`hrsinchphenoage`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/HRSInCHPhenoAge.csv),
+ [`lin2016blood_99cpgs`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Lin2016Blood_99CpGs.csv),
+ [`yingdamage`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/YingDamAge.csv),
+ [`yingadaptage`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/YingAdaptAge.csv),
+ [`hannum2013blood`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Hannum2013Blood.csv),
+ [`dec2023encen100`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Dec2023ENCen100.csv),
+ [`yingcausage`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/YingCausAge.csv),
+ [`horvath2018`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Horvath2018.csv),
+ [`vidal-bralo2016blood`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Vidal-Bralo2016Blood.csv),
+ [`lin2016blood_3cpgs`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Lin2016Blood_3CpGs.csv),
+ [`zhangblup2019`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/ZhangBLUP2019.csv),
+ [`zhangenclock2019`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/ZhangENClock2019.csv),
+ [`phenoage2018`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/PhenoAge2018.csv),
+ [`dec2023encen40`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Dec2023ENCen40.csv), [`horvath2018`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Horvath2018.csv), [`horvath2013_shrunken`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Horvath2013_Shrunken.csv), [`horvath2013`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Horvath2013.csv), [`han2020blood`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/Han2020Blood.csv)
 
-More info [link table name](link to csv table)
+More info [`computage/models_library/ModelsDescription(upd20240805).csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/ModelsDescription(upd20240805).csv)
 
 ## Datasets Used in Study
-All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685`, `GSE203399`, `GSE32148`, `GSE87640`, `GSE42861`, `GSE62867`, `GSE56581`, `GSE107143`, `GSE62003`, `GSE53840`, `GSE87648`, `GSE49909`, `GSE56046`
-`paper/Supplementary table 1.xlsx`
+All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685`, `GSE203399`, `GSE32148`, `GSE87640`, `GSE42861`, `GSE62867`, `GSE56581`, `GSE107143`, `GSE62003`, `GSE53840`, `GSE87648`, `GSE49909`, `GSE56046`. For imputation by `sesame450k` [`computage/models_library/raw_models/sesame_450k_median.csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/sesame_450k_median.csv) data was used.
 
 ## Models Used in Study
-All linear models used in the study can be found in `computage/models_library/ModelsDescription(upd20240805).csv`
+All linear models used in the study can be found in [`computage/models_library/ModelsDescription(upd20240805).csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/ModelsDescription(upd20240805).csv)
 
 ## Contact
 For any questions or clarifications, please reach out to: aryuna.ayusheeva.1998@gmail.com, khairetdinova.studies@gmail.com, dmitrii.kriukov@skoltech.ru
