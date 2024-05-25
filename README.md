@@ -99,3 +99,6 @@ All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685
 
 ## Models Used in Study
 All linear models used in the study can be found in `computage/models_library/ModelsDescription(upd20240805).csv`
+
+## Contact
+For any questions or clarifications, please reach out to: aryuna.ayusheeva.1998@gmail.com, khairetdinova.studies@gmail.com, dmitrii.kriukov@skoltech.ru
