@@ -1,3 +1,7 @@
+![Python](https://img.shields.io/badge/python-v3.10+-blue.svg)
+[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
+![made with love](https://img.shields.io/badge/made%20with%20%E2%9D%A4%EF%B8%8F-8A2BE2)
+
 # ComputAge
 A library for full-stack aging clocks design and benchmarking.
 
@@ -104,6 +108,9 @@ All results and plots of the `ComputAgeBench` paper can be reproduced using this
 
 ## Contact
 For any questions or clarifications, please reach out to: dmitrii.kriukov@skoltech.ru
+
+## Community
+Please feel free to leave any questions and suggestions in issues, however, if you want a faster and broader discussion, please join to our [telegram chat](https://t.me/agingmath). 
 
 ## Acknowledgments
 
