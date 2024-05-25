@@ -2,7 +2,7 @@
 ![Python](https://img.shields.io/badge/python-v3.11+-blue.svg)
 ![made with love](https://img.shields.io/badge/made%20with%20%E2%9D%A4%EF%B8%8F-8A2BE2)
 
-A repository containing the code accompanying the thesis "Multi-model platform for predicting biological age using DNA methylation and other age-associated data" by Aiusheeva A., Khairetdinova A., Kriukov D., Efimov E. ([link to thesis](https://docs.google.com/document/d/14n0dbZ__1WixYWfHOoA_MzKpy7_U_4bF0A2hsUm4ggA/edit?usp=sharing№№№№№), [Link to slides](https://docs.google.com/presentation/d/1mGrtdA-2_gAEoWWa5XMw-bVd3PpfNBnS7KbofaOf0Gs/edit?usp=sharing№№№№№№))
+A repository containing the code accompanying the thesis "Multi-model platform for predicting biological age using DNA methylation and other age-associated data" by Aiusheeva A., Khairetdinova A., Kriukov D., Efimov E. ([link to thesis](https://docs.google.com/document/d/14n0dbZ__1WixYWfHOoA_MzKpy7_U_4bF0A2hsUm4ggA###########/edit?usp=sharing№№№№№), [Link to slides](https://docs.google.com/presentation/d/1mGrtdA-2_gAEoWWa5XMw-bVd3PpfNBnS7KbofaOf0Gs#########3/edit?usp=sharing№№№№№№))
 
 ## Description
 
