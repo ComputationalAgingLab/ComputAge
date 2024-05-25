@@ -3,6 +3,8 @@ import numpy as np
 import requests
 from urllib.parse import urlencode
 import os
+
+from computage.settings import ROOTDIR
 from computage.configs.links_config import META_DATASETS_LINK, BASE_DATA_URL
 
 # classcond = {
@@ -103,3 +105,27 @@ def construct_config(dataset_prefix: str,
              if k in f:
                 config[k]['path'] = os.path.join(data_folder, f)
     return config
+
+
+def prepare_datasets_config(path: str) -> dict:
+    """
+    Read config from the project folder.
+    """
+    bsb_table = pd.read_csv(path)
+    datasets_config_main = {}
+    for _, r in bsb_table.iterrows():
+        gse = r['Dataset ID']
+        if gse not in datasets_config_main.keys():
+            datasets_config_main[gse] = {
+			    'path':None,
+				'conditions':[r['Condition']],
+				'test':'AA2' if r['HC content'] == 'HC' else 'AA1'
+			}
+        else:
+            datasets_config_main[gse]['conditions'].append(r['Condition'])
+    return datasets_config_main
+
+#function for fast BSB config retrieval
+def get_bsb_config() -> dict:
+    config_path = os.path.join(ROOTDIR, "data_library/BenchBSB_table.csv")  
+    return prepare_datasets_config(config_path)

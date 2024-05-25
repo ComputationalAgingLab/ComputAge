@@ -1,7 +1,7 @@
 # Configure datasets using for benchmarking of aging clock models.
 DATASETS_PREFIX = '/tank/projects/computage/benchmarking/'
 
-
+### old config, will be deprecated in future versions ###
 datasets_config_main = {
                     #CVD
                     'GSE56046':{'path':f'{DATASETS_PREFIX}GSE56046.pkl.gz',
@@ -86,7 +86,7 @@ datasets_config_main = {
                                'test':'AA2'
                                },
                     'GSE145714':{'path':f'{DATASETS_PREFIX}GSE145714.pkl.gz',
-                               'conditions':['HIV_TB'], 
+                               'conditions':['HIV_TB', 'TB'], 
                                'test':'AA2'
                                },
                     'GSE185389':{'path':f'{DATASETS_PREFIX}GSE185389.pkl.gz',

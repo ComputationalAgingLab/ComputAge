@@ -8,6 +8,11 @@ playground.ipynb
 test_spot.ipynb
 _*.ipynb
 _*.py
+benchmarking.ipynb
+notebooks/usage.ipynb
+notebooks/benchplots.ipynb
+notebooks/benchplots_old.ipynb
+notebooks/benchmarking_old.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

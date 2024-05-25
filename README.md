@@ -13,7 +13,7 @@ This provides all necessary instruments for aging clocks benchmarking.
 
 # ComputAgeBench
 
-A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the paper [...upcoming...].
+A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data of **66** GSEs from more than **50** studies can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the paper [...upcoming...].
 
 ## Introduction
 
@@ -47,9 +47,10 @@ Suppose you trained brand-new epigenetic aging clocks model using classic `sciki
 ```python
 from computage import run_benchmark
 
-#first define NaN imputation method for in_library models
-#for simlicity here we recommend to use imputation with zeros
-imputation = 'none'
+#first define NaN imputation method for `in_library` models
+#for simlicity here we recommend to use imputation with 
+#gold standard averages (from R package `sesame`)
+imputation = 'sesame_450k'
 models_config = {
     "in_library":{
         'HorvathV1':{'imputation':imputation},
@@ -93,11 +94,10 @@ meta = pd.read_csv('computage_bench_meta.tsv', sep='\t', index_col=0)
 ```
 
 ## Reproducing paper results
-
+All results and plots of the `ComputAgeBench` paper can be reproduced using this [notebook](https://drive.google.com/file/d/1_nrGMUd8oH8ADNWUPNeXHr4ZAJlZOQhm/view?usp=sharing).
 
 ## Additional information
 [...Table with all clocks...]
----
 
 ## Cite us
 [...coming soon...]
@@ -107,7 +107,7 @@ For any questions or clarifications, please reach out to: dmitrii.kriukov@skolte
 
 ## Acknowledgments
 
-
+We thank the [biolearn](https://bio-learn.github.io/data.html) team for providing inspiration and many useful tools that were helpful during the initial development of this library. 
 
 
 

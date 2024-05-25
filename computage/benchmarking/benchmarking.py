@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 from computage.models_library.model import LinearMethylationModel, GrimAgeModel, model_definitions
 from computage.utils.data_utils import cond2class, download_meta, download_dataset, construct_config
 from computage.plots.benchplots import plot_class_bench, plot_medae, plot_bias
+from computage.models_library.definitions import get_clock_file
 from huggingface_hub import snapshot_download
 
 class EpiClocksBenchmarking:
@@ -77,7 +78,7 @@ class EpiClocksBenchmarking:
         self.tissue_types = [self.tissue_types] if type(self.tissue_types) == str else self.tissue_types
         self.age_limits = age_limits
         self.age_limits_class_exclusions = age_limits_class_exclusions
-        self.n_datasets = len(datasets_config)
+        self.n_datasets = sum([len(v['conditions']) for k,v in datasets_config.items()])
         self.n_models = len(models_config['in_library']) + len(models_config['new_models'])
         self.save_results = save_results
         self.plot_results = plot_results
@@ -92,6 +93,7 @@ class EpiClocksBenchmarking:
         self.delta_assumption = delta_assumption
         self.pvalue_threshold = pvalue_threshold
         self.verbose = verbose
+        self.imputation_values = pd.read_csv(get_clock_file("sesame_450k_median.csv"), index_col=0)
         print(f'{self.n_models} models will be tested on {self.n_datasets} datasets.')
         
     
@@ -154,6 +156,9 @@ class EpiClocksBenchmarking:
         
         #initialize models
         self.models = self.prepare_models()
+        
+        if len(self.models_config['new_models']) > 0:
+            self.newmodels = self.prepare_new_models()
 
         #go!
         self.bench_results_AA2 = pd.DataFrame()
@@ -188,7 +193,7 @@ class EpiClocksBenchmarking:
             dnam = dnam.loc[tissue_indices]
             
             #################################
-            ###Should be modified in future## 
+            ##############RUN################ 
             #################################
             predictions = {}
             with tqdm(total=self.n_models, desc='Models', leave=False) as pbar:
@@ -205,16 +210,14 @@ class EpiClocksBenchmarking:
                 #de novo clocks prediction                     
                 new_models_keys = list(self.models_config['new_models'].keys())
                 for key in new_models_keys:
-                    path = self.models_config['new_models'][key]['path']
-                    model = pickle.load(open(path, 'rb'))
-                    try:
-                        dnam_ = dnam.reindex(columns = list(model.pls.feature_names_in_)).copy()
-                    except:
-                        dnam_ = dnam.reindex(columns = list(model.feature_names_in_)).copy()
-                        # zero imputation
-                        dnam_ = dnam_.fillna(0.)
-                    
-                    preds_ = model.predict(dnam_)
+                    imputation = self.models_config['new_models'][key].get('imputation', 'none')
+                    dnam_ = self.impute_nans(
+                                        dnam, 
+                                        features=self.newmodels[key].feature_names_in_,
+                                        method=imputation,
+                                        ivalues=self.newmodels[key].ivalues
+                                        )
+                    preds_ = self.newmodels[key].predict(dnam_)
                     predictions[key] = self.check_predictions(preds_, dnam_)
                     pbar.update(1)
 
@@ -303,6 +306,30 @@ class EpiClocksBenchmarking:
                 m = GrimAgeModel(name, **params)
             models[name] = m
         return models
+
+    def prepare_new_models(self) -> dict:
+        models = {}
+        for name, params in self.models_config['new_models'].items():
+            m = pickle.load(open(params['path'], 'rb'))
+            m.ivalues = self.imputation_values.loc[m.feature_names_in_]
+            models[name] = m
+        return models   
+    
+    def impute_nans(self, 
+                    X: pd.DataFrame, 
+                    features: pd.Index | list | np.ndarray, 
+                    method: str = 'none',
+                    ivalues: pd.Series|None = None,
+                    ) -> pd.DataFrame:
+        if method == 'none':
+            X_ = X.reindex(columns=features).fillna(0.)
+        elif method == 'sesame_450k':
+            X_ = X.reindex(columns=features).fillna(ivalues['median'])
+        elif method == 'average':
+            X_ = X.reindex(columns=features)
+            averages = X_.mean(axis=0).fillna(0.) #fill with 0 if no values in a column
+            X_ = X_.fillna(averages)
+        return X_
 
     def AA2_test(self, pred, meta, gse, cond):
         #calculating mann-whitney test for difference in age acceleration between disease and healthy cohorts
@@ -420,28 +447,34 @@ class EpiClocksBenchmarking:
         #plot AA2
         if len(self.corrected_results_AA2_bool) > 0:
             plot_class_bench(self.corrected_results_AA2_bool, 
-                                figsize=(11.0, 0.5 * (len(self.corrected_results_AA2_bool) + 1)))
+                                figsize=(10.5, 0.48 * (len(self.corrected_results_AA2_bool) + 1)),
+                                firstcolwidth = 1.9,
+                                )
             plt.savefig(os.path.join(self.figure_folder, 'AA2_main.pdf'), format='pdf', dpi=180)
-            plt.close()
+            plt.show()
 
         #plot AA1
         if len(self.corrected_results_AA1_bool) > 0:
             plot_class_bench(self.corrected_results_AA1_bool, 
-                                figsize=(11.0, 0.5 * (len(self.corrected_results_AA1_bool) + 1)))
+                                figsize=(9, 0.48 * (len(self.corrected_results_AA1_bool) + 1)),
+                                classcolwidth=0.64,
+                                totalcolwidth=0.7,
+                                firstcolwidth = 1.2
+                                )
             plt.savefig(os.path.join(self.figure_folder, 'AA1_main.pdf'), format='pdf', dpi=180)
-            plt.close()
+            plt.show()
         
         #plot chronological age prediction accuracy results
-        _, colordict = plot_medae(self.CA_prediction_results, figsize=(11., 4.6), upper_bound=18) 
+        _, colordict = plot_medae(self.CA_prediction_results, figsize=(2.8, 5), upper_bound=18) 
         plt.tight_layout()
         plt.savefig(os.path.join(self.figure_folder, 'CA_MedAE_main.pdf'), format='pdf', dpi=180)
-        plt.close()
+        plt.show()
 
         #plot chronological age prediction bias results
-        plot_bias(self.CA_bias_results, colordict, figsize=(11, 4.6))
+        plot_bias(self.CA_bias_results, colordict, figsize=(2.8, 5), xlims=[-20, 20])
         plt.tight_layout()
         plt.savefig(os.path.join(self.figure_folder, 'AA_bias_main.pdf'), format='pdf', dpi=180)
-        plt.close()
+        plt.show()
 
 
 def run_benchmark(models_config: dict, 
@@ -469,8 +502,8 @@ def run_benchmark(models_config: dict,
         of the benchmarking experiment.
     """
 	if datasets_config is None:
-		from computage.configs.datasets_bench_config import datasets_config_main
-		datasets_config = datasets_config_main
+		from computage.utils.data_utils import get_bsb_config
+		datasets_config = get_bsb_config()
 
 	bench = EpiClocksBenchmarking(
 		models_config=models_config,
