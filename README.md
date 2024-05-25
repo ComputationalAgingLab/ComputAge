@@ -94,7 +94,7 @@ meta = pd.read_csv('computage_bench_meta.tsv', sep='\t', index_col=0)
 ```
 
 ## Reproducing paper results
-All results and plots of the `ComputAgeBench` paper can be reproduced using this [notebook](https://drive.google.com/file/d/1_nrGMUd8oH8ADNWUPNeXHr4ZAJlZOQhm/view?usp=sharing).
+All results and plots of the `ComputAgeBench` paper can be reproduced using this [notebook](https://drive.google.com/file/d/1_nrGMUd8oH8ADNWUPNeXHr4ZAJlZOQhm/view?usp=sharing). Alternatively, you can just clone this repository and run the same notebook locally from the `notebooks` folder.
 
 ## Additional information
 [...Table with all clocks...]
@@ -107,7 +107,7 @@ For any questions or clarifications, please reach out to: dmitrii.kriukov@skolte
 
 ## Acknowledgments
 
-We thank the [biolearn](https://bio-learn.github.io/data.html) team for providing inspiration and many useful tools that were helpful during the initial development of this library. 
+We thank the [biolearn](https://bio-learn.github.io/data.html) team for providing inspiration and many useful tools that were helpful during the initial development stage of this library. 
 
 
 

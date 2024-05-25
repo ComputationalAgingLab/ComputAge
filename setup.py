@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='computage',
-    version='0.1.4',
+    version='0.1.5',
     description='A library for full-stack aging clocks design and benchmarking.',
     packages=find_packages(),
     package_data={
