@@ -2,7 +2,7 @@
 ![Python](https://img.shields.io/badge/python-v3.11+-blue.svg)
 ![made with love](https://img.shields.io/badge/made%20with%20%E2%9D%A4%EF%B8%8F-8A2BE2)
 
-A repository containing the code accompanying the thesis "Multi-model platform for predicting biological age using DNA methylation and other age-associated data" by Aiusheeva A., Khairetdinova A., Kriukov D., Efimov E. ([link to thesis](https://№№№№№docs.google.com/document/d/14n0dbZ__1WixYWfHOoA_MzKpy7_U_4bF0A2hsUm4ggA/edit?usp=sharing), [Link to slides](https:№№№№№№//docs.google.com/presentation/d/1mGrtdA-2_gAEoWWa5XMw-bVd3PpfNBnS7KbofaOf0Gs3/edit?usp=sharing))
+A repository containing the code accompanying the thesis "Multi-model platform for predicting biological age using DNA methylation and other age-associated data" by Aiusheeva A., Khairetdinova A., Kriukov D., Efimov E. ([link to thesis](https://docs.google.com/document/d/14n0dbZ__1WixYWfHOoA_MzKpy7_U_4bF0A2hsUm4ggA/edit?usp=sharing), [Link to slides](https://docs.google.com/presentation/d/1mGrtdA-2_gAEoWWa5XMw-bVd3PpfNBnS7KbofaOf0Gs3/edit?usp=sharing))
 
 ## Description
 
@@ -18,8 +18,8 @@ The repository includes 7 jupyter notebooks named by the type of data under anal
 
 - `workbook_dataset_assembly.ipynb` - Data assembling for the study
 - `lin_models_estimation_full.ipynb` - Linear models estimation workbook
-- `imputation_linmodels.ipynb` - Testing `average`], `none`], `sesame450k` imputation in linear models
-- `imputation_hc_phenoage.ipynb` - Testing `average`], `none`], `sesame450k` imputation in `phenoage2018` (light version of the notebook above)
+- `imputation_linmodels.ipynb` - Testing `average`, `none`, `sesame450k` imputation in linear models
+- `imputation_hc_phenoage.ipynb` - Testing `average`, `none`, `sesame450k` imputation in `phenoage2018` (light version of the notebook above)
 - `requirements.txt` - python modules that were used 
 
 
@@ -50,7 +50,7 @@ from computage.utils.data_utils import download_meta, download_dataset
 from computage.models_library.model import LinearMethylationModel
 
 meta = download_meta(`./meta_table_datasets.xlsx`)
-download_dataset(meta, `GSE132203`], `.`)
+download_dataset(meta, `GSE132203`, `.`)
 df = pd.read_pickle(`GSE132203.pkl`)
 ```
 ## Example with `phenoage` model, imputation by `average`
@@ -61,7 +61,7 @@ y = pd.DataFrame(meta[`Age`])
 y_test = y.rename(columns={`Age`: `age`})
 
 
-model_phenoage = LinearMethylationModel(name=`phenoage2018`], imputation=`average`)
+model_phenoage = LinearMethylationModel(name=`phenoage2018`, imputation=`average`)
 y_pred_test = model_phenoage.predict(X)
        
 print(median_absolute_error(y_test, y_pred_test))
