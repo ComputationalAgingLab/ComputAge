@@ -11,3 +11,4 @@ scikit-learn==1.4.1.post1
 scipy==1.11.4
 seaborn==0.13.2
 tqdm==4.66.2
+ipykernel
