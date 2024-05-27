@@ -28,10 +28,12 @@ The repository includes 7 jupyter notebooks named by the type of data under anal
 ```bash
 git clone https://github.com/ComputationalAgingLab/ComputAge
 
-cd Computage
+cd ComputAge
 
 git checkout dev_clocks
 ```
+
+## **Requirements**
 ```bash
 conda env create --name computage --file dev_clocks.yml
 
@@ -46,6 +48,7 @@ pip3 install requirements.txt
 # **Usage tutorial**
 
 ## Download modules and data
+
 ```python
 import pandas as pd
 import numpy as np
@@ -58,6 +61,8 @@ download_dataset(meta, `GSE132203`, `.`)
 df = pd.read_pickle(`GSE132203.pkl`)
 ```
 ## Example with `phenoage` model, imputation by `average`
+
+Case with GSEID `GSE132203` from GEO database
 ```python
 X = pd.DataFrame(df[`data`])
 meta = pd.DataFrame(df[`meta`])
@@ -97,7 +102,9 @@ print(r2_score(y_test, y_pred_test))
 More info [`computage/models_library/ModelsDescription(upd20240805).csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/ModelsDescription(upd20240805).csv)
 
 ## Datasets Used in Study
-All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685`, `GSE203399`, `GSE32148`, `GSE87640`, `GSE42861`, `GSE62867`, `GSE56581`, `GSE107143`, `GSE62003`, `GSE53840`, `GSE87648`, `GSE49909`, `GSE56046`. For imputation by `sesame450k` [`computage/models_library/raw_models/sesame_450k_median.csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/sesame_450k_median.csv) data was used.
+All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685`, `GSE203399`, `GSE32148`, `GSE87640`, `GSE42861`, `GSE62867`, `GSE56581`, `GSE107143`, `GSE62003`, `GSE53840`, `GSE87648`, `GSE49909`, `GSE56046`. More info about collected data in [`meta_table_datasets.xlsx`](https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F7ywsWVjy4DeeWAZKkSJjw8scu7IAQL3ZWJt8jlz%2FSR%2BLxm%2Fe%2FAss5aQ9fRfwVXI%2Bq%2FJ6bpmRyOJonT3VoXnDag%3D%3D&name=meta_table_datasets.xlsx&nosw=1)
+
+For imputation by `sesame450k` [`computage/models_library/raw_models/sesame_450k_median.csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/raw_models/sesame_450k_median.csv) data was used.
 
 ## Models Used in Study
 All linear models used in the study can be found in [`computage/models_library/ModelsDescription(upd20240805).csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/ModelsDescription(upd20240805).csv)
