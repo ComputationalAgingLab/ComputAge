@@ -47,22 +47,30 @@ python3 -m ipykernel install --user --name=ComputAge
 
 # **Usage tutorial**
 
-## Download modules and data
+## Download modules and data. Case with GSEID `GSE56581` from GEO database
 
 ```python
+import os
 import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score, median_absolute_error
 from computage.utils.data_utils import download_meta, download_dataset
 from computage.models_library.model import LinearMethylationModel
 
-meta = download_meta('./meta_table_datasets.xlsx')
-download_dataset(meta, 'GSE56581', '.')
-df = pd.read_pickle('GSE56581.pkl.gz')
-```
-## Example with `phenoage` model, imputation by `average`
+your_dir = 'example_data'
+example_datasetID = 'GSE56581'
 
-Case with GSEID `GSE56581` from GEO database
+if not (os.path.isdir(your_dir) and os.path.exists(your_dir)) :
+    os.mkdir(your_dir)
+else:
+    pass    
+
+meta = download_meta('./meta_table_datasets.xlsx')
+download_dataset(meta, example_datasetID , your_dir)
+df = pd.read_pickle(os.path.join(your_dir,(example_datasetID +'.pkl.gz')))
+```
+
+## Example with `phenoage` model, imputation by `average`
 ```python
 X = pd.DataFrame(df['data'])
 meta = pd.DataFrame(df['meta'])
@@ -78,7 +86,7 @@ print(r2_score(y_test, y_pred_test))
 
 ```
 
-## [Usage notebook for user](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/Example.ipynb)
+## [Example notebook for user](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/Example.ipynb)
 
 
 ## __List of available ready-to-use models:__
