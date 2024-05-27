@@ -36,7 +36,7 @@ git checkout dev_clocks
 conda env create --name computage --file dev_clocks.yml
 conda activate computage
 ```
-*or (preferable)* 
+*then do it (preferable)* 
 ```bash
 python3 -m venv .computage_venv
 source .computage_venv/bin/activate
