@@ -26,7 +26,11 @@ The repository includes 7 jupyter notebooks named by the type of data under anal
 # **Installation**
 
 ```bash
-git clone https://github.com/ComputationalAgingLabComputAge
+git clone https://github.com/ComputationalAgingLab/ComputAge
+
+cd Computage
+
+git checkout dev_clocks
 ```
 ```bash
 conda env create --name computage --file dev_clocks.yml
