@@ -27,16 +27,13 @@ The repository includes 7 jupyter notebooks named by the type of data under anal
 
 ```bash
 git clone https://github.com/ComputationalAgingLab/ComputAge
-
 cd ComputAge
-
 git checkout dev_clocks
 ```
 
 ## **Requirements**
 ```bash
 conda env create --name computage --file dev_clocks.yml
-
 conda activate computage
 ```
 *or* 
@@ -56,21 +53,21 @@ from sklearn.metrics import r2_score, median_absolute_error
 from computage.utils.data_utils import download_meta, download_dataset
 from computage.models_library.model import LinearMethylationModel
 
-meta = download_meta(`./meta_table_datasets.xlsx`)
-download_dataset(meta, `GSE132203`, `.`)
-df = pd.read_pickle(`GSE132203.pkl`)
+meta = download_meta('./meta_table_datasets.xlsx')
+download_dataset(meta, 'GSE132203', '.')
+df = pd.read_pickle('GSE132203.pkl')
 ```
 ## Example with `phenoage` model, imputation by `average`
 
 Case with GSEID `GSE132203` from GEO database
 ```python
-X = pd.DataFrame(df[`data`])
-meta = pd.DataFrame(df[`meta`])
-y = pd.DataFrame(meta[`Age`])
-y_test = y.rename(columns={`Age`: `age`})
+X = pd.DataFrame(df['data'])
+meta = pd.DataFrame(df['meta'])
+y = pd.DataFrame(meta['Age'])
+y_test = y.rename(columns={'Age': 'age'})
 
 
-model_phenoage = LinearMethylationModel(name=`phenoage2018`, imputation=`average`)
+model_phenoage = LinearMethylationModel(name='phenoage2018', imputation='average')
 y_pred_test = model_phenoage.predict(X)
        
 print(median_absolute_error(y_test, y_pred_test))
