@@ -75,9 +75,7 @@ print(r2_score(y_test, y_pred_test))
 
 ```
 
-
-
-[Usage notebook](link to notebook)
+## [Usage notebook for user](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/Example.ipynb)
 
 
 ## __List of available ready-to-use models:__
@@ -98,6 +96,7 @@ print(r2_score(y_test, y_pred_test))
 
 More info [`computage/models_library/ModelsDescription(upd20240805).csv`](https://github.com/ComputationalAgingLab/ComputAge/blob/dev_clocks/computage/models_library/ModelsDescription(upd20240805).csv)
 
+# **Data and models availability**
 ## Datasets Used in Study
 All datasets used in the study can be found in GEO vi IDs: `GSE69138`, `GSE59685`, `GSE203399`, `GSE32148`, `GSE87640`, `GSE42861`, `GSE62867`, `GSE56581`, `GSE107143`, `GSE62003`, `GSE53840`, `GSE87648`, `GSE49909`, `GSE56046`. More info about collected data in [`meta_table_datasets.xlsx`](https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F7ywsWVjy4DeeWAZKkSJjw8scu7IAQL3ZWJt8jlz%2FSR%2BLxm%2Fe%2FAss5aQ9fRfwVXI%2Bq%2FJ6bpmRyOJonT3VoXnDag%3D%3D&name=meta_table_datasets.xlsx&nosw=1)
 
