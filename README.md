@@ -41,7 +41,7 @@ conda activate computage
 python3 -m venv .computage_venv
 source .computage_venv/bin/activate
 pip install -r requirements.txt
-ipython kernel install --user --name=.computage_venv
+python3 -m ipykernel install --user --name=ComputAge
 ```
 ***
 
