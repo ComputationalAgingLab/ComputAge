@@ -178,3 +178,5 @@ workbook_download.ipynb
 workbook.ipynb
 workbook2.ipynb
 workbook3alb.ipynb
+.venv*
+.computage_venv*
