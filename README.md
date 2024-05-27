@@ -57,12 +57,12 @@ from computage.utils.data_utils import download_meta, download_dataset
 from computage.models_library.model import LinearMethylationModel
 
 meta = download_meta('./meta_table_datasets.xlsx')
-download_dataset(meta, 'GSE132203', '.')
-df = pd.read_pickle('GSE132203.pkl')
+download_dataset(meta, 'GSE56581', '.')
+df = pd.read_pickle('GSE56581.pkl')
 ```
 ## Example with `phenoage` model, imputation by `average`
 
-Case with GSEID `GSE132203` from GEO database
+Case with GSEID `GSE56581` from GEO database
 ```python
 X = pd.DataFrame(df['data'])
 meta = pd.DataFrame(df['meta'])
