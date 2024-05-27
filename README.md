@@ -36,9 +36,12 @@ git checkout dev_clocks
 conda env create --name computage --file dev_clocks.yml
 conda activate computage
 ```
-*or* 
+*or (preferable)* 
 ```bash
-pip3 install requirements.txt
+python3 -m venv .computage_venv
+source .computage_venv/bin/activate
+pip3 install -r requirements.txt
+ipython kernel install --user --name=.computage_venv
 ```
 ***
 
