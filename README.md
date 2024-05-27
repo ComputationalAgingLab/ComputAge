@@ -40,7 +40,7 @@ conda activate computage
 ```bash
 python3 -m venv .computage_venv
 source .computage_venv/bin/activate
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ipython kernel install --user --name=.computage_venv
 ```
 ***
