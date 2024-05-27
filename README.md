@@ -58,7 +58,7 @@ from computage.models_library.model import LinearMethylationModel
 
 meta = download_meta('./meta_table_datasets.xlsx')
 download_dataset(meta, 'GSE56581', '.')
-df = pd.read_pickle('GSE56581.pkl')
+df = pd.read_pickle('GSE56581.pkl.gz')
 ```
 ## Example with `phenoage` model, imputation by `average`
 
