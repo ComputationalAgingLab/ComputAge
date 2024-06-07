@@ -17,7 +17,7 @@ This provides all necessary instruments for aging clocks benchmarking.
 
 # ComputAgeBench
 
-A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data of **66** GSEs from more than **50** studies can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the paper [...upcoming...].
+A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data of **66** GSEs from more than **50** studies can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the [paper](https://www.biorxiv.org/content/10.1101/2024.06.06.597715v1).
 
 ## Introduction
 
