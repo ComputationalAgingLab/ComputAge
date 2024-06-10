@@ -104,7 +104,21 @@ All results and plots of the `ComputAgeBench` paper can be reproduced using this
 [...Table with all clocks...]
 
 ## Cite us
-[...coming soon...]
+
+If you found this library or corresponding [dataset]((https://huggingface.co/datasets/computage/computage_bench)) useful in your research, please cite us with the following plain citation or bibtex.
+
+*Kriukov, D., Efimov, E., Kuzmina, E. A., Khrameeva, E. E., & Dylov, D. V. (2024). ComputAgeBench: Epigenetic Aging Clocks Benchmark. bioRxiv, 2024-06.*
+
+```
+@article{kriukov2024computagebench,
+  title={ComputAgeBench: Epigenetic Aging Clocks Benchmark},
+  author={Kriukov, Dmitrii and Efimov, Evgeniy and Kuzmina, Ekaterina A and Khrameeva, Ekaterina E and Dylov, Dmitry V},
+  journal={bioRxiv},
+  pages={2024--06},
+  year={2024},
+  publisher={Cold Spring Harbor Laboratory}
+}
+```
 
 ## Contact
 For any questions or clarifications, please reach out to: dmitrii.kriukov@skoltech.ru
