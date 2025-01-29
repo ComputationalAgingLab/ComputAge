@@ -13,11 +13,11 @@ You can install the whole library with `pip`:
 
 `pip install computage`
 
-This provides all necessary instruments for aging clocks benchmarking.
+This provides all necessary instruments for aging clocks training and benchmarking.
 
 # ComputAgeBench
 
-A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data of **66** GSEs from more than **50** studies can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the [paper](https://www.biorxiv.org/content/10.1101/2024.06.06.597715v1).
+A module in the `computage` library for epigenetic aging clocks training and benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data can be retrieved from. In total, the benchmarking dataset comprises **10,404 samples** and **900,449 features** (DNA methylation sites) coming from 65 separate studies, while the training dataset consists of **7,419 samples** and **907,766 features** from 46 studies (some features are missing in some datasets). All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the [paper](https://www.biorxiv.org/content/10.1101/2024.06.06.597715v1).
 
 ## Introduction
 
@@ -30,7 +30,7 @@ and used to predict an individual’s age. Moreover, it has been hypothesized th
 However, comparing aging clock performance is no trivial task, as there is no gold standard measure of one’s biological age, so using MAE, Pearson’s *r*, or other 
 common correlation metrics is not sufficient.
 
-To foster greater advances in the aging clock field, [we developed a methodology and a dataset](https://huggingface.co/datasets/computage/computage_bench) for aging clock benchmarking, ComputAge Bench, which relies on measuring 
+To foster greater advances in the aging clock field, [we developed a methodology and a dataset](https://huggingface.co/datasets/computage/computage_bench) for aging clock training and benchmarking, ComputAge Bench, which relies on measuring 
 model ability to predict increased ages in samples from patients with *pre-defined* **aging-accelerating conditions** (AACs) relative to samples from 
 healthy controls (HC). **We highly recommend consulting the Methods and Discussion sections of our paper before proceeding to use this dataset and to build 
 any conclusions upon it.**
@@ -79,7 +79,7 @@ bench = run_benchmark(models_config,
 
 
 ### Explore the dataset
-In case you want just to explore our dataset locally, use the following commands for downloading.
+In case you want just to explore our dataset (both training and benchmarking) locally, use the following commands for downloading.
 ```python
 from huggingface_hub import snapshot_download
 snapshot_download(
@@ -91,14 +91,17 @@ Once downloaded, the dataset can be open with `pandas` (or any other `parquet` r
 ```python
 import pandas as pd
 #let's choose a study id, for example `GSE100264`
-df = pd.read_parquet('data/computage_bench_data_GSE100264.parquet').T 
-#note we transpose data for more convenient perception
+df = pd.read_parquet('data/benchmark/computage_bench_data_GSE100264.parquet').T 
+#note we transpose data for more convenient view
 #Don't forget to explore metadata (which is common for all datasets):
 meta = pd.read_csv('computage_bench_meta.tsv', sep='\t', index_col=0)
 ```
 
+## Usage (training)
+ComputAge provides access not only to a dataset for benchmarking but also to a dataset for training (containing DNA methylation **7,419 samples** retrieved from healthy people) new aging clocks. This dataset will be downloaded automatically if you use the command from the previous section and will be located in the `data/train` directory. If you are interested in how the training process of the first-generation aging clocks works, please check out the specially prepared [notebook](https://drive.google.com/file/d/17oODr9a5nz3GVV74Grxrxl1wxQ-Y0hAr/view?usp=sharing).
+
 ## Reproducing paper results
-All results and plots of the `ComputAgeBench` paper can be reproduced using this [notebook](https://drive.google.com/file/d/1_nrGMUd8oH8ADNWUPNeXHr4ZAJlZOQhm/view?usp=sharing). Alternatively, you can just clone this repository and run the same notebook locally from the `notebooks` folder.
+All results and plots of the `ComputAgeBench` [paper](https://www.biorxiv.org/content/10.1101/2024.06.06.597715v1) can be reproduced using this [notebook](https://drive.google.com/file/d/1_nrGMUd8oH8ADNWUPNeXHr4ZAJlZOQhm/view?usp=sharing). Alternatively, you can just clone this repository and run the same notebook locally from the `notebooks` folder.
 
 ## Additional information
 [...Table with all clocks...]
