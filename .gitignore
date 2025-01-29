@@ -7,7 +7,8 @@ playground.ipynb
 *.code-workspace
 test_spot.ipynb
 _*.ipynb
-_*.py
+# _*.py
+_bench*.py
 benchmarking.ipynb
 notebooks/usage.ipynb
 notebooks/benchplots.ipynb
