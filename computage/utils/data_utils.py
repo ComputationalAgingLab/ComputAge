@@ -92,13 +92,18 @@ def cond2class(conds: list[str]) -> list:
 
 
 def construct_config(dataset_prefix: str, 
-                     datasets_config: dict):
+                     datasets_config: dict,
+                     split: str = 'benchmark',
+                     ):
     """
     Function for rewriting file paths downloaded from hugging face hub.
+    params:
+        split: str - the name of split, can be from {`benchmark`, `train`}
     """
+    assert split in ['benchmark', 'train'], 'Wrong split name, choose from {`benchmark`, `train`}'
     config = datasets_config.copy()
     config_keys = list(datasets_config.keys())
-    data_folder = os.path.join(dataset_prefix, 'data')
+    data_folder = os.path.join(dataset_prefix, f'data/{split}')
     data_files = os.listdir(data_folder)
     for k in config_keys:
         for f in data_files:

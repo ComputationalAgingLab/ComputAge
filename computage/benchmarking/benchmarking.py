@@ -123,11 +123,16 @@ class EpiClocksBenchmarking:
         for gse in toremove:        
             del self.datasets_config[gse]
 
-    def download_from_huggingface(self):
+    def download_benchmark_from_huggingface(self):        
         snapshot_download(
-                repo_id='computage/computage_bench', 
-                repo_type="dataset",
-                local_dir=self.data_folder)
+                        repo_id='computage/computage_bench', 
+                        repo_type="dataset",
+                        local_dir=self.data_folder,
+                        allow_patterns=[
+                                        'computage_bench_meta.tsv', 
+                                        'data/benchmark/*.parquet'
+                                        ]
+                        )
 
     def run(self) -> None:
         """
@@ -144,7 +149,7 @@ class EpiClocksBenchmarking:
         if self.verbose > 0: 
             print(f'Check data.')
         if self.data_repository == 'huggingface':
-            self.download_from_huggingface()
+            self.download_benchmark_from_huggingface()
             samples_meta = pd.read_csv(os.path.join(self.data_folder, 'computage_bench_meta.tsv'), 
                            sep='\t', index_col=0)
         else:
@@ -152,7 +157,7 @@ class EpiClocksBenchmarking:
 
         #prepare dataconfig
         if self.data_repository == 'huggingface':
-            self.datasets_config = construct_config(self.data_folder, self.datasets_config)
+            self.datasets_config = construct_config(self.data_folder, self.datasets_config, split='benchmark')
         
         #initialize models
         self.models = self.prepare_models()
@@ -337,7 +342,7 @@ class EpiClocksBenchmarking:
         healthy_idx = meta.index[meta['Condition'] == 'HC']
         if (len(disease_idx) == 0) or (len(healthy_idx) == 0):
             print(f'{gse}:{cond} - {len(disease_idx)} disease and {len(healthy_idx)} healthy samples found - AA2 test is impossible. Skip!')
-            return None
+            return None, None
         if self.verbose > 0:
             print(f'{gse}:{cond} - AA2 testing {len(disease_idx)} disease versus {len(healthy_idx)} healthy samples')
         pvals = {}
@@ -368,7 +373,7 @@ class EpiClocksBenchmarking:
         disease_idx = meta.index[meta['Condition'] == cond]
         if (len(disease_idx) == 0):
             print(f'{gse}:{cond} - {len(disease_idx)} disease samples found - AA1 test is impossible. Skip!')
-            return None
+            return None, None
         if self.verbose > 0:
             print(f'{gse}:{cond} - AA1 testing {len(disease_idx)} disease samples')
         pvals = {}
@@ -440,7 +445,7 @@ class EpiClocksBenchmarking:
 
     @staticmethod
     def correction(x):
-        return multipletests(x, method='fdr_bh')[1] #returns adjusted p-values only
+        return multipletests(x.fillna(1.0), method='fdr_bh')[1] #returns adjusted p-values only
     
 
     def plot_bench_results(self):

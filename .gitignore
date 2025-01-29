@@ -13,6 +13,7 @@ notebooks/usage.ipynb
 notebooks/benchplots.ipynb
 notebooks/benchplots_old.ipynb
 notebooks/benchmarking_old.ipynb
+notebooks/benchmarking_local.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
