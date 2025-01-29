@@ -17,7 +17,7 @@ This provides all necessary instruments for aging clocks benchmarking.
 
 # ComputAgeBench
 
-A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data of **66** GSEs from more than **50** studies can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the paper [...upcoming...].
+A module in the `computage` library for epigenetic aging clocks benchmarking. This library is tightly bound with `computage_bench` huggingface [repository](https://huggingface.co/datasets/computage/computage_bench) where all DNA methylation data of **66** GSEs from more than **50** studies can be retrieved from. All details on our methodology of epigenetic aging clocks benchmarking and results can be found in the [paper](https://www.biorxiv.org/content/10.1101/2024.06.06.597715v1).
 
 ## Introduction
 
@@ -104,7 +104,21 @@ All results and plots of the `ComputAgeBench` paper can be reproduced using this
 [...Table with all clocks...]
 
 ## Cite us
-[...coming soon...]
+
+If you found this library or corresponding [dataset]((https://huggingface.co/datasets/computage/computage_bench)) useful in your research, please cite us with the following plain citation or bibtex.
+
+*Kriukov, D., Efimov, E., Kuzmina, E. A., Khrameeva, E. E., & Dylov, D. V. (2024). ComputAgeBench: Epigenetic Aging Clocks Benchmark. bioRxiv, 2024-06.*
+
+```
+@article{kriukov2024computagebench,
+  title={ComputAgeBench: Epigenetic Aging Clocks Benchmark},
+  author={Kriukov, Dmitrii and Efimov, Evgeniy and Kuzmina, Ekaterina A and Khrameeva, Ekaterina E and Dylov, Dmitry V},
+  journal={bioRxiv},
+  pages={2024--06},
+  year={2024},
+  publisher={Cold Spring Harbor Laboratory}
+}
+```
 
 ## Contact
 For any questions or clarifications, please reach out to: dmitrii.kriukov@skoltech.ru
